@@ -13,7 +13,7 @@ Feel free to raise an issue in this GitHub repository for a public discussion of
 
 This project would not have been possible without the [R statistical computing environment](http://www.r-project.org/), and in particular the [{survey} package by Thomas Lumley](http://cran.r-project.org/web/packages/survey/index.html), [{dplyr}](http://cran.r-project.org/web/packages/dplyr/index.html) and [{ggplot2}](http://cran.r-project.org/web/packages/ggplot2/index.html) by Hadley Wickham, and [{shiny}](http://cran.r-project.org/web/packages/shiny/index.html) by the RStudio team.
 
-Special thanks to Statistics New Zealand and to the New Zealand Institute of Economic Research, both of whom hosted seminars at which work in progress was provided.  Statistics New Zealand also provided a custom dataset to improve the results, with confidentiality applied, under conditions designed to give effect to the security and confidentiality provisions of the Statistics Act 1975.  That dataset is published in this repository but is of little interest for its own sake.  All other data sources have been previously published.
+Special thanks to Statistics New Zealand and to the New Zealand Institute of Economic Research, both of whom hosted seminars at which valuable feedback was provided on work in progress.  Statistics New Zealand also provided a custom dataset to improve the results, with confidentiality applied, under conditions designed to give effect to the security and confidentiality provisions of the Statistics Act 1975.  That dataset is available in this repository, but is of most interest as an interim step to the final results.  All other data sources have been previously published.
 
 Caveats and disclaimers:
 
