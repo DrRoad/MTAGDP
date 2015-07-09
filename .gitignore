@@ -1,0 +1,16 @@
+.Rproj.user
+.Rhistory
+.RData
+*.rda
+*.aux
+*.lof
+*.tex
+*.log
+*.lot
+*.toc
+*.pdf
+*.png
+*.out
+*humbs.db
+!shiny/*
+*.dcf

@@ -1,0 +1,180 @@
+LEED4Industry,deflatorIndustry
+Nursery and floriculture production,Agriculture
+Mushroom and vegetable growing,Agriculture
+Fruit and tree nut growing,Agriculture
+"Grain, sheep, and beef cattle farming",Agriculture
+Other crop growing,Agriculture
+Dairy cattle farming,Agriculture
+Poultry farming,Agriculture
+Deer farming,Agriculture
+Other livestock farming,Agriculture
+Forestry and logging,Forestry and Logging
+Aquaculture,"Fishing, Aquaculture and Agriculture, Forestry and Fishing Support Services"
+Fishing,"Fishing, Aquaculture and Agriculture, Forestry and Fishing Support Services"
+Hunting and trapping,"Fishing, Aquaculture and Agriculture, Forestry and Fishing Support Services"
+Forestry support services,"Fishing, Aquaculture and Agriculture, Forestry and Fishing Support Services"
+Agriculture and fishing support services,"Fishing, Aquaculture and Agriculture, Forestry and Fishing Support Services"
+"Coal, oil, gas, and metal ore mining",Mining
+Construction material mining,Mining
+Other non-metallic mineral mining and quarrying,Mining
+Exploration and other mining services,Mining
+Meat and meat product manufacturing,"Food, Beverage and Tobacco Product Manufacturing"
+Seafood processing,"Food, Beverage and Tobacco Product Manufacturing"
+Dairy product and other food product manufacturing,"Food, Beverage and Tobacco Product Manufacturing"
+Fruit and vegetable processing,"Food, Beverage and Tobacco Product Manufacturing"
+Grain mill and cereal product manufacturing,"Food, Beverage and Tobacco Product Manufacturing"
+"Bakery product, sugar, and confectionery manufacturing","Food, Beverage and Tobacco Product Manufacturing"
+Beverage and tobacco manufacturing,"Food, Beverage and Tobacco Product Manufacturing"
+"Textile fibre, yarn, and woven fabric manufacturing","Textile, Leather, Clothing and Footwear Manufacturing"
+Leather tanning and fur dressing,"Textile, Leather, Clothing and Footwear Manufacturing"
+Textile product manufacturing,"Textile, Leather, Clothing and Footwear Manufacturing"
+Knitted product manufacturing,"Textile, Leather, Clothing and Footwear Manufacturing"
+Clothing and footwear manufacturing,"Textile, Leather, Clothing and Footwear Manufacturing"
+Log sawmilling and timber dressing,Wood and Paper Products Manufacturing
+Other wood product manufacturing,Wood and Paper Products Manufacturing
+"Pulp, paper, and converted paper product manufacturing",Wood and Paper Products Manufacturing
+Printing,Printing
+Petroleum refining and petroleum and coal product manufacturing,"Petroleum, Chemical, Polymer and Rubber Product Manufacturing"
+Chemical manufacturing,"Petroleum, Chemical, Polymer and Rubber Product Manufacturing"
+Basic polymer manufacturing,"Petroleum, Chemical, Polymer and Rubber Product Manufacturing"
+Fertiliser and pesticide manufacturing,"Petroleum, Chemical, Polymer and Rubber Product Manufacturing"
+Pharmaceutical and medicinal product manufacturing,"Petroleum, Chemical, Polymer and Rubber Product Manufacturing"
+Other basic chemical product manufacturing,"Petroleum, Chemical, Polymer and Rubber Product Manufacturing"
+Polymer product and rubber product manufacturing,"Petroleum, Chemical, Polymer and Rubber Product Manufacturing"
+Glass and glass product manufacturing,Non-Metallic Mineral Product Manufacturing
+Ceramic product manufacturing,Non-Metallic Mineral Product Manufacturing
+"Cement, lime, plaster and concrete product manufacturing",Non-Metallic Mineral Product Manufacturing
+Other non-metallic mineral product manufacturing,Non-Metallic Mineral Product Manufacturing
+Primary metal and metal product manufacturing,Metal Product Manufacturing
+Iron and steel forging,Metal Product Manufacturing
+Structural metal product manufacturing,Metal Product Manufacturing
+Metal container manufacturing,Metal Product Manufacturing
+Other sheet metal product manufacturing,Metal Product Manufacturing
+Other fabricated metal product manufacturing,Metal Product Manufacturing
+Motor vehicle and motor vehicle part manufacturing,"Transport Equipment, Machinery and Equipment Manufacturing"
+Other transport equipment manufacturing,"Transport Equipment, Machinery and Equipment Manufacturing"
+Professional and scientific equipment manufacturing,"Transport Equipment, Machinery and Equipment Manufacturing"
+Computer and electronic equipment manufacturing,"Transport Equipment, Machinery and Equipment Manufacturing"
+Electrical equipment and domestic appliance manufacturing,"Transport Equipment, Machinery and Equipment Manufacturing"
+"Pump, compressor, heating, and ventilation equipment manufacturing","Transport Equipment, Machinery and Equipment Manufacturing"
+Specialised machinery and equipment manufacturing,"Transport Equipment, Machinery and Equipment Manufacturing"
+Other machinery and equipment manufacturing,"Transport Equipment, Machinery and Equipment Manufacturing"
+Furniture manufacturing,Furniture and Other Manufacturing
+Other manufacturing,Furniture and Other Manufacturing
+Electricity and gas supply,"Electricity, Gas, Water and Waste Services"
+"Water supply, sewerage, and drainage services","Electricity, Gas, Water and Waste Services"
+Waste collection services,"Electricity, Gas, Water and Waste Services"
+"Waste treatment, disposal, and remediation services","Electricity, Gas, Water and Waste Services"
+Construction,Construction
+Residential building construction,Construction
+Non-residential building construction,Construction
+Heavy and civil engineering construction,Construction
+Land development and site preparation services,Construction
+Building structure services,Construction
+Building installation services,Construction
+Building completion services,Construction
+Other construction services,Construction
+Agricultural product wholesaling,Wholesale Trade
+"Mineral, metal, and chemical wholesaling",Wholesale Trade
+Timber and hardware goods wholesaling,Wholesale Trade
+Specialised industrial machinery and equipment wholesaling,Wholesale Trade
+Other machinery and equipment wholesaling,Wholesale Trade
+Motor vehicle and motor vehicle parts wholesaling,Wholesale Trade
+"Grocery, liquor, and tobacco product wholesaling",Wholesale Trade
+"Textile, clothing, and footwear wholesaling",Wholesale Trade
+Pharmaceutical and toiletry goods wholesaling,Wholesale Trade
+"Furniture, floor coverings, and other goods wholesaling",Wholesale Trade
+Commission based wholesaling,Wholesale Trade
+Motor vehicle retailing,Retail Trade
+Motor vehicle parts retailing,Retail Trade
+Fuel retailing,Retail Trade
+Supermarket and grocery stores,Retail Trade
+Specialised food retailing,Retail Trade
+"Furniture, floor coverings, houseware, and textile goods retailing",Retail Trade
+Electrical and electronic goods retailing,Retail Trade
+"Hardware, building, and garden supplies retailing",Retail Trade
+Recreational goods retailing,Retail Trade
+"Clothing, footwear, and personal accessories retailing",Retail Trade
+Department stores,Retail Trade
+Pharmaceutical and other store-based retailing,Retail Trade
+Non store retailing,Retail Trade
+Retail commission based buying and/or selling,Retail Trade
+Accommodation,Accommodation and Food Services
+"Cafes, restaurants and takeaway food services",Accommodation and Food Services
+"Pubs, taverns and bars",Accommodation and Food Services
+Clubs (hospitality),Accommodation and Food Services
+Road transport,"Transport, Postal and Warehousing"
+"Rail, water, air, and space transport","Transport, Postal and Warehousing"
+Scenic and sightseeing transport,"Transport, Postal and Warehousing"
+Pipeline and other transport,"Transport, Postal and Warehousing"
+Postal and other transport support services,"Transport, Postal and Warehousing"
+Water transport support services,"Transport, Postal and Warehousing"
+Air transport support services,"Transport, Postal and Warehousing"
+Warehousing and storage services,"Transport, Postal and Warehousing"
+Publishing (except music publishing),Information Media and Telecommunications
+Motion picture and video activities,Information Media and Telecommunications
+Sound recording and music publishing,Information Media and Telecommunications
+Broadcasting (except internet),Information Media and Telecommunications
+"Telecommunications, internet, and data processing services",Information Media and Telecommunications
+Libraries and archives,Information Media and Telecommunications
+Central banking and non-depository financing,Financial and Insurance Services
+Depository financial intermediation,Financial and Insurance Services
+Financial asset investing,Financial and Insurance Services
+Life insurance,Financial and Insurance Services
+Health and general insurance,Financial and Insurance Services
+Superannuation funds,Financial and Insurance Services
+Auxiliary finance and investment services,Financial and Insurance Services
+Auxiliary insurance services,Financial and Insurance Services
+Motor vehicle and transport equipment rental and hiring,"Rental, Hiring and Real Estate Services"
+Other goods and equipment rental and hiring,"Rental, Hiring and Real Estate Services"
+Non-financial intangible assets (except copyrights) leasing,"Rental, Hiring and Real Estate Services"
+Property operators,"Rental, Hiring and Real Estate Services"
+Real estate services,"Rental, Hiring and Real Estate Services"
+Owner-Occupied Property Operation,Owner-Occupied Property Operation (National Accounts Only)
+Scientific research services,"Professional, Scientific and Technical Services"
+"Architectural, engineering, and technical services","Professional, Scientific and Technical Services"
+Legal and accounting services,"Professional, Scientific and Technical Services"
+Advertising services,"Professional, Scientific and Technical Services"
+Market research and statistical services,"Professional, Scientific and Technical Services"
+Management and other consulting services,"Professional, Scientific and Technical Services"
+Veterinary services,"Professional, Scientific and Technical Services"
+"Other professional, scientific, and technical services","Professional, Scientific and Technical Services"
+Computer systems design and related services,"Professional, Scientific and Technical Services"
+Travel agency services,Administrative and Support Services
+Employment services,Administrative and Support Services
+Other administrative services,Administrative and Support Services
+"Building cleaning, pest control, and gardening services",Administrative and Support Services
+Packaging and labelling services,Administrative and Support Services
+Local government administration,Local Government Administration
+Central government administration,"Central Government Administration, Defence and Public Safety"
+"Public order, safety, and regulatory services, and defence","Central Government Administration, Defence and Public Safety"
+Preschool education,Education and Training
+School education,Education and Training
+Tertiary education,Education and Training
+"Adult, community, and other education",Education and Training
+Hospitals,Health Care and Social Assistance
+Medical services,Health Care and Social Assistance
+Pathology and diagnostic imaging services,Health Care and Social Assistance
+Allied health services,Health Care and Social Assistance
+Other health care services,Health Care and Social Assistance
+Residential care services,Health Care and Social Assistance
+Child care services,Health Care and Social Assistance
+Other social assistance services,Health Care and Social Assistance
+Museum operation,Arts and Recreation Services
+Parks and gardens operations,Arts and Recreation Services
+Creative and performing arts activities,Arts and Recreation Services
+Sport and physical recreation activities,Arts and Recreation Services
+Horse and dog racing activities,Arts and Recreation Services
+Amusement and other recreation activities,Arts and Recreation Services
+Gambling activities,Arts and Recreation Services
+Automotive repair and maintenance,Other Services
+Machinery and equipment repair and maintenance,Other Services
+Other repair and maintenance,Other Services
+Personal care services,Other Services
+"Funeral, crematorium, and cemetery services",Other Services
+Other personal services,Other Services
+Religious services,Other Services
+"Civic, professional, and other interest group services",Other Services
+Not elsewhere included,Other Services
+"GST on Production, Import Duties and Other Taxes","GST on Production, Import Duties and Other Taxes"
+Owner-occupied property operation (national accounts only),Owner-Occupied Property Operation (National Accounts Only)

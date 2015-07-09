@@ -1,0 +1,81 @@
+\documentclass{mbie-report}
+\errorcontextlines=999
+\usepackage{float}
+
+\floatstyle{plaintop}
+\restylefloat{table}
+
+\usepackage{pdflscape}
+\usepackage{graphicx}
+
+\classification{DRAFT}
+\issn{x}
+
+\title{MTAGDP FAQ}{Modelled Territorial Authority Gross Domestic Product}
+\subtitle{Frequently Asked Questions}
+\date{May 2015}
+
+\begin{document}
+\maketitle
+\bodytextsize
+\tableofcontents
+
+
+\section{What and why?}
+\subsection{Why was there a need to estimate TA GDP?}
+\emph{[...brief description of the aim/motivation of the project]}
+Although Regional GDP figures have been available from Statistics New Zealand since 2013, there are a number of research questions and policy needs that require finer-scale information (i.e. both in terms of the industry classifications and the spatial granularity).  This project was initiated in order to partially fulfil this need, providing an internally consistent, robust estimate of GDP at the Territorial Authority level.  
+
+\subsection{How was TAGDP estimated?}
+\emph{...brief description of the methodology}
+Estimates of TAGDP were calculated using a methodology called `Iterative Proportional Fitting', more commonly known as `raking', which adjusts a table of cells to add up to selected columns and rows (or `margins').  This methodology is commonly used in survey sampling, where data from a survey (a subset of the population) are `raked' to match the population totals.  For estimating TAGDP, several data sources were used to successively `rake' from employee numbers from the Business Demography Statistics, Linked Employer-Employee Database tables, Regional and National GDP.  This procedure effectively takes the coarser-level information of GDP match the finest-level industry classifications and Territorial Authority data available.
+
+\section{How good?}
+
+\subsection{How do these estimates compare to official published [Statistics New Zealand] regional GDP figures?}
+\emph{[...some validation information, relation to NGDP?]}
+Estimates of TAGDP were calculated to match official published statistics for both Regional and National GDP, however in the stages of analysis to match available data at finer scales (i.e. in terms of industry classifications and Territorial Authorities) created sources of error in the TAGDP estimates.  The underlying assumptions of the analysis also need to be taken into context when directly comparing between published official statistics.
+
+\subsection{What quality control/peer review has been made on the TAGDP estimates?}
+\emph{[...citing any peer review/validation work, else]}
+Since the original proof of concept in late 2014, several key presentations and Q & A discussion sessions have been made with the New Zealand Institute of Economic Research (NZIER) and the National Accounts team of Statistics New Zealand.  MBIE's Sector Performance team have also validated & error-checked results, for which differences from published data can be verified at different stages of the analysis (i.e. comparisons with Regional and National GDP, Linked Employer-Employee Database tables). 
+
+\subsection{Are there any key assumptions that I should be aware of in using the TAGDP estimates?}
+\emph{[in particular, the relationship between employee earnings & GDP and something on the TA area approximations for non-nestedness within Regional Councils]}
+Fitting the finer-level detail of employees and geographic units to published Regional and National GDP figures required some assumptions about how the finer level detail `matches' the coarser data.  These `matches' were itemised in tables for establishing linkages where there was no easily defined or hierarchical relationship (e.g. in cases where Territorial Authorities do not match to a single region, and where industry categories were aggregated across primary and goods-producing industries).  
+Several industry categories in the Regional and National GDP were not present in the Business Demography Statistics (e.g. `Owner-Occupied Dwelling Operation' and GST).  These were assumed to be proportionate to Earnings within geographic regions.  \emph{No inclusion of `self-employed' in BDS statistics?}
+The methodology also has an implicit assumption that the earnings to GDP ratios are the same across Territorial Authorities within a Regional Council as well as sub-industries within a broader industry category (e.g. `Mushroom and vegetable growing' and `Fruit and tree nut growing' under the National GDP industry category of `Horticulture and vegetable growing').  Without explicit information in order to calibrate any differences between geographic or industry categories, for this analysis have assumed that these are the same.
+
+Difference in home versus work address across Territorial Authorities (i.e. `commuter correction') 
+
+\section{How do I use them?}
+\subsection{What are the key categories/units that describe the TAGDP estimates?}
+\emph{I am assuming that this will refer to the `public release' *.csv of outputs (i.e. non git-hub), so not sure this reflects the final detail in the output release}
+Key dimensions of the TAGDP estimates are Year, Territorial Authority, Regional GDP Industry grouping, National GDP Industry grouping (or possibly LEED4 ?), Employees, Earnings (I think this means the `commuting_corrected' version), and GDP.
+
+\emph{Do we also want to include a column for per-capita values in the `public release'?}
+
+\subsection{What source data and software program(s) have been used to calculate the TAGDP estimates?}
+Source data were obtained from Infoshare (for Regional GDP) and NZ.Stat (for Business Demography Statistics and three LEED tables).  Raw data were imported as *.csv files into R.  Data shaping, manipulation, and calculations relied mainly on \verb|dplyr|, \verb|tidyr|, and \verb|survey| packages.  Graphical output was created predominately with the R package \verb|ggplot2|.
+
+\subsection{How should the TAGDP estimates be cited?}
+Reference to the use of the raw output data and graphic output should be cited as:
+\emph{Not exactly sure of the format that MBIE would like this to be cited}
+
+\subsection{Am I able to access the [source] code for the TAGDP estimates?}
+Yes, the source code used to create the TAGDP estimates and the raw data obtained from Statistics New Zealand (i.e. Business Demography Statistics, Linked Employer-Employee Database tables) can be accessed via Github.  \emph{Insert reference to the repository location}
+
+\subsection{Who do I contact for more information about this project/use of of the TAGDP estimates?}
+More information on the project and the use of the TAGDP estimates can be obtained by contacting: \emph{Peter, I am assuming you would be the point of contact for this?  But, could be through main MBIE information - please advise.}
+
+\subsection{What are the most recent data available for TAGDP and how frequently will the estimates be updated?}
+The most frequent data available for TAGDP are from 2000 to 2012.  This is largely due to the availability of the detailed industry employer-employee data, which are updated every 3  years.  After the next official data release from Statistics New Zealand, we anticipate to update the TAGDP figures.
+
+\subsection{Do the TAGDP estimates include or exclude GST?}
+Yes, estimates for TAGDP were made according to Regional and National GDP figures by proportionately attributing these data to the finer detailed industry information (i.e. Business Demography Statistics at Territorial Authority Level).  In the graphical output, we omitted the `GST on Production, Import Duties and Other Taxes' category to aid in the comparisons between industry categories and Territorial Authorities.  \emph{FS: I spoke with James about this.  As `GST on Production, Import Duties and Other Taxes' is always within the top 5 industries - as it is largely proportional (at least the GST component), it may make sense to leave it out.  This is just a placeholder in the event that we do decide to exclude it from the graphs.}
+
+\section{What next?}
+
+etc
+
+\end{document}
