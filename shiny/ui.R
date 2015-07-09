@@ -212,8 +212,8 @@ Creative Commons Attribution 3.0 New Zealand License</a>.</p>
 </div>
 
 <div>
-<p><a href = "https://github.com/nz-mbie/TAMGDP"><img src="Octocat.jpg" alt = "GitHub Octocat logo" title = "Link to source code on GitHub" width = "80" height = "66"></a>
-Go to GitHub to get the <a href = "https://github.com/nz-mbie/MTAGDP">source code</a> the Ministry used to create these modelled estimates and this web app.
+<p><a href = "http://nz-mbie.github.io/MTAGDP/"><img src="Octocat.jpg" alt = "GitHub Octocat logo" title = "Link to source code on GitHub" width = "80" height = "66"></a>
+Go to GitHub to get the <a href = "http://nz-mbie.github.io/MTAGDP/">source code</a> the Ministry used to create these modelled estimates and this web app.
 </p>
 </div>
 
