@@ -260,5 +260,8 @@
         
    #   Getting back to the project directory     
         setwd(project_dir)
-        
-        
+
+
+#        Make a public copy of the source material
+source("dissemination_code/create_public_repo_snapshot.R")
+

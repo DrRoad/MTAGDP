@@ -9,7 +9,8 @@ knockout <- c(
   grep("\\.rdata$", all_files),
   grep("\\.Rproj$", all_files),
   grep("\\.png$", all_files),
-  grep("\\.dcf$", all_files)
+  grep("\\.dcf$", all_files),
+  grep("deploy", all_files)
 )
   
 all_files <- all_files[-knockout]
