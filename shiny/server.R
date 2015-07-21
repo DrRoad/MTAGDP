@@ -12,6 +12,8 @@ load("TAGDP_data.rda")
 load("dimensions.rda")
 load("ta_pops.rda")
 load("ta_cols.rda")
+load("Commentary.rda")
+
 width <- "auto"
 
 shinyServer(function(input, output, session) {
@@ -403,6 +405,10 @@ my_tagdp %>%
               }, on="hover") %>%
   bind_shiny("dot_plot") 
    
+
+
+output$TA_commentary <- renderText(paste("<hr>", Commentary$CommentaryBoth[Commentary$TA == input$TA]))
+
 
 #------------------Tab 3 Motion chart---------------------------
  

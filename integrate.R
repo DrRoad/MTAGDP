@@ -206,17 +206,14 @@
       source("dissemination_code/plot_industries_by_TA.R")
       source("dissemination_code/plot_industries_by_region.R")
 
-   # Sankey charts for selected industry / region combinations; and network of commuting patterns
-   # Sankey chart returns some errors which are caught by calls to try() - this happens when
-   # sub categories of industry are the same as their parent categories, hence making the chart
-   # uninteresting.
-      source("dissemination_code/plot_sankey_charts.R")
+
       source("dissemination_code/plot_commuting_patterns.r")
 
    
    ##
    ## Prepare data and deploy Shinyapp
    ## 
+      source("dissemination_code/prepare_basic_TA_commentary.R")
       source("dissemination_code/save_shiny_data.R")
       source("dissemination_code/deploy_shinyapp.R") # deploys "tagdp_test" by default; edit the script if you also 
                                                 # want to deploy "tagdp"
@@ -262,6 +259,6 @@
         setwd(project_dir)
 
 
-#        Make a public copy of the source material
-source("dissemination_code/create_public_repo_snapshot.R")
+   #        Make a public copy of the source material.  Assumes existence on the f: drive of the necessary folders etc (created once-off by hand)
+      source("dissemination_code/create_public_repo_snapshot.R")
 

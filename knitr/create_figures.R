@@ -125,7 +125,10 @@
      dev.off()  
     
   
-  ## from plot_sankey_charts.R
+  ## example sankey chart
+  
+   Pal1 <- brewer.pal(9, "Pastel1")
+   Pal2 <- brewer.pal(8, "Pastel2")
   
      CairoPDF("figures/sankey_southlandConstruction.pdf",11, 9)
           par(family = "Calibri")

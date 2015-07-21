@@ -98,4 +98,5 @@
   save(ta_pops, file = "shiny/ta_pops.rda")     
   save(tagdp_shiny, TheTotals, file = "shiny/TAGDP_data.rda")
   save(ta_cols, file = "shiny/ta_cols.rda")
+  save(Commentary, file = "shiny/Commentary.rda")
 

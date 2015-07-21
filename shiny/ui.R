@@ -143,8 +143,14 @@ shinyUI(fluidPage(
               
             ),
             fixedRow(
-              htmlOutput("detail_title"),
-              ggvisOutput("dot_plot")
+              column(width = 9,
+                htmlOutput("detail_title"),
+                ggvisOutput("dot_plot")
+              ),
+              column(width = 3,
+                htmlOutput("TA_commentary")       
+                     
+              )
               
             )
    ),
