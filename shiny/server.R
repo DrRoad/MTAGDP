@@ -407,7 +407,19 @@ my_tagdp %>%
    
 
 
-output$TA_commentary <- renderText(paste("<hr>", Commentary$CommentaryBoth[Commentary$TA == input$TA]))
+TheCommentary <- reactive({
+  if(input$Type == Types[1, "label"]){
+    tmp <- Commentary$Commentary_rgdp[Commentary$TA == input$TA]
+    
+  } else {
+    tmp <- Commentary$Commentary_ngdp[Commentary$TA == input$TA]
+    
+  }
+    tmp <- paste0(tmp, Commentary$closest[Commentary$TA == input$TA])
+  return(tmp)
+})
+
+output$TA_commentary <- renderText(paste("<hr>", TheCommentary()))
 
 
 #------------------Tab 3 Motion chart---------------------------
