@@ -1,6 +1,7 @@
-CAGR <- function (ratio, period, digits = 1) {
-  round((exp(log(ratio)/period) - 1) * 100, digits)
-}
+# Generates commentary for use in the Shiny app.  For each TA it identifies the most distinctive industry,
+# the largest in absolute terms, the fastest growing industry, and the three TAs that are closest to it
+# in a notional five dimensional space created by the first five principal components of the TA x industry
+# matrix.   The selected industries are done both for RGDP_industry and NGDP_industry.
 
 #====================RGDP level==================
 Props_nat <- TAGDP_public %>%

@@ -53,13 +53,23 @@
 
    tagdp_shiny <- rbind(tagdp2, tagdp3)
 
+AllNZTotals <- tagdp_shiny %>%
+  group_by(Industry, Year, Type) %>%
+  summarise(GDP = sum(GDP),
+            GDP_real = sum(GDP_real),
+            GDP_tot = mean(GDP_tot)) %>%
+  mutate(TA = "All New Zealand")
+  
+tagdp_shiny <- rbind(tagdp_shiny, AllNZTotals)
+
 #-------------------
   TheTotals <- tagdp_shiny %>%
                filter(Type == "RGDP") %>%
                group_by(Year, TA) %>%
                summarise(GDP = sum(GDP),
                          GDP_real = sum(GDP_real)) %>% 
-               ungroup()
+               ungroup() 
+
 
 #=====================Dimensions=================
 # We need the data frame we usually use to map TAs as it has the centres of each TA
@@ -73,7 +83,7 @@
                  select(FULLNAME, lat.centre) %>%
                  distinct() %>%
                  arrange(-lat.centre)
-  TAs <- TAs_ordered$FULLNAME
+  TAs <- c(TAs_ordered$FULLNAME, "All New Zealand")
 
   TAs_short <- gsub(" District", "", TAs)
   TAs_short <- gsub(" City", "", TAs_short)
@@ -91,6 +101,8 @@
   set.seed(123)
   ta_cols <- data_frame(TA = c(TAs, "Black"), TA_short = c(TAs_short$TA, "Black"),
                         Col = c(sample(colorRampPalette(mbie.cols())(length(TAs))), "Black"))
+
+ta_cols[ta_cols$TA == "All New Zealand", "Col"] <- "Black"
 
 #=====================save===============
 

@@ -120,7 +120,7 @@ shinyUI(fluidPage(
               column(width = 4, 
                      selectInput("TA",
                                  "Choose a Territorial Authority:",
-                                 choices = TAs,
+                                 choices = TAs[TAs != "All New Zealand"],
                                  width="200px",
                                  selected = sample(TAs, 1),
                                  selectize=FALSE)

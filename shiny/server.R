@@ -296,7 +296,7 @@ shinyServer(function(input, output, session) {
     add_axis("x", title = "Average growth rate", format = ".1%") %>%
    add_axis("y", title = " ", title_offset = 105) %>%
      add_tooltip(dot_plot_hover) %>%
-    set_options(width = width, height = 450)})
+    set_options(width = width, height = 550)})
  
 
  
@@ -332,7 +332,7 @@ shinyServer(function(input, output, session) {
    }
    
    if("defl" %in% input$Adjustments){
-     tmp <- gsub("nominal", "real", tmp)
+     tmp <- gsub("Nominal", "Real", tmp, ignore.case = TRUE)
    }
    
    return(tmp)

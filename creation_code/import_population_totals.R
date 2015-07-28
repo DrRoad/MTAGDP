@@ -22,8 +22,9 @@
               rename(TA = CV1, 
                      Population = Value) %>%
               select(Year, TA, Population) %>%
-              filter(!TA %in% c("Chatham Islands Territory", "New Zealand"),
-                                Year %in% 2000:2012)
+              filter(!TA %in% c("Chatham Islands Territory"),
+                                Year %in% 2000:2012) %>%
+              mutate(TA = ifelse(TA == "New Zealand", "All New Zealand", TA))
 
   
 
