@@ -80,6 +80,8 @@
       library(shinyapps)
       library(mbiemaps)
       library(riverplot)
+      library(tm)
+      library(wordcloud)
       
 
       # Proxy password to get through MBIE firewall.  Placed here so you can run all of integrate.r without it stopping 
@@ -215,8 +217,8 @@
    ## 
       source("dissemination_code/prepare_basic_TA_commentary.R")
       source("dissemination_code/save_shiny_data.R")
-      source("dissemination_code/deploy_shinyapp.R") # deploys "tagdp_test" by default; edit the script if you also 
-                                                # want to deploy "tagdp"
+      source("dissemination_code/deploy_shinyapp.R") # deploys "mtagdp_test" by default; edit the script if you also 
+                                                # want to deploy "mtagdp"
 
 ##
 ## ----------------- 6. Conduct exploratory analyses and map visuals----------------------
@@ -259,6 +261,9 @@
         setwd(project_dir)
 
 
-   #        Make a public copy of the source material.  Assumes existence on the f: drive of the necessary folders etc (created once-off by hand)
+   #   Make a public copy of the source material.  Assumes existence on the f: drive of the necessary folders etc (created once-off by hand)
       source("dissemination_code/create_public_repo_snapshot.R")
 
+   #   meta analysis of this repository - how many lines of code etc
+      source("exploratory_analysis_code/meta_analysis.R")
+        

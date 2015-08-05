@@ -450,13 +450,40 @@ output$TA_commentary <- renderText(paste("<hr>", TheCommentary()))
            group_by(TA, Industry) %>%
            mutate(GDP = GDP / GDP[1] * 100) %>%
            ungroup() 
-       } 
+         
+         updateCheckboxGroupInput(session, "Adjustments",
+                                  choices = c("Inflation" = "defl", "Per population" = "pp"), 
+                                  selected = input$Adjustments,
+                                  inline = TRUE)
+         
+         
+      } 
      
      if(input$MotionValue == "Share of area's GDP"){
         tmp1 <- tmp1 %>%
          group_by(TA, Year) %>%
          mutate(GDP = GDP / sum(GDP) * 100) %>%
          ungroup() 
+        
+        if(input$TheTabs == "Explore"){
+          # Remove some invalid options that make no sense when showing share of GDP
+          updateCheckboxGroupInput(session, "Adjustments",
+                                   choices = c("Inflation" = "defl"),
+                                   selected = input$Adjustments[input$Adjustments != "pp"],
+                                   inline = TRUE)
+        }
+        
+     }
+     
+     if(input$MotionValue == "Original dollar amount"){
+       tmp1 <- tmp1 %>%
+         filter(TA!= "All New Zealand") 
+       
+       updateCheckboxGroupInput(session, "Adjustments",
+                                choices = c("Inflation" = "defl", "Per population" = "pp"), 
+                                selected = input$Adjustments,
+                                inline = TRUE)
+       
      }
      
      tmp2 <- tmp1 %>%
