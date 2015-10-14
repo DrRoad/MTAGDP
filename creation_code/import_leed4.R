@@ -2,7 +2,11 @@
 ##    Programme:  import_leed4.R
 ##
 ##    Objective:  LEED data are used to estimate how much economic value is generated within each TA
-##                and low-level industry.  This programme reads in some LEED data in.
+##                and low-level industry.   These data are used as sample margins for 'raking' to the
+##                employee numbers (i.e. weights) from the Business Demography Statistics.
+##
+##    Approach:   This programme reads data from the LEED table 4 and aggregates the values to year end
+##                March.  'Year' is used again to match other data throughout the routine.
 ##
 ##    Authors:    Peter Ellis, Sector Performance,   
 ##                  Ministry of Business, Innovation & Employment
@@ -11,16 +15,15 @@
 ##
 
 # important - This is table 4 with all quarters, all of the lowest level in the industry
-# hierarchy (but not other levels), and only one measure
+#             hierarchy (but not other levels), and only one measure
 
 
   leed4 <- read.csv("data_raw/TABLECODE7004_Data_e7610f76-5579-49b3-b63e-9d13a339bd93.csv",
-                  stringsAsFactors = FALSE)
+                    stringsAsFactors = FALSE)
   
 # WARNING - a problem with the manual download means the Central Government Administration was in twice
   leed4 <- leed4 %>%
            mutate(Value = ifelse(Industry == "Central government administration", Value / 2, Value))
-
 
 #============aggregate to YE March=================
 

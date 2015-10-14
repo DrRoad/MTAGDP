@@ -1,19 +1,20 @@
 ##
-##    Programme:  Import_BDS.r
+##    Programme:  import_BDS.r
 ##
 ##    Objective:  The Business Demography Statistics (BDS) provide the low level regional estimates 
-##                for estimating where economic activity is taking place.  BDS data is used to estimate
+##                for estimating where economic activity is taking place.  BDS data are used to estimate
 ##                the relative size of the production occuring at low industry definitions and within
 ##                the different Territorial Authorities.
+##                
+##                Employee numbers are used as weights for the survey design when raking to the LEED
+##                tables (i.e. total Earnings).
 ##       
-##                This programme reads the data in, and addresses so of the concordance issues within
-##                the data.
+##                This programme reads the data in from NZ.Stats from the BDS.  Concordance between
+##                Regional Councils and Territorial Authorities are also performed on the data.
 ##
-##    Authors:    Peter Ellis, James Hogan, Franz Smith, Sector Performance,   
-##                  Ministry of Business, Innovation & Employment
-##                This one's all Peter
-##
-##  Date:       2015-05-21
+##    Authors:    Peter Ellis, Sector Performance, Ministry of Business, Innovation & Employment 
+##                  
+##    Date:       2015-05-21
 ##
 
    ##
@@ -36,6 +37,7 @@
       Level3Industries <- AllBDSIndustries[substring(AllBDSIndustries, 5, 5) == " " & 
                                              substring(AllBDSIndustries, 4, 4) != " "]
 
+   ## Some of the industry levels need to be combined
       MustMerge <- list(
             c("B101", "B109"),
             c("B060", "B070", "B080"), 
@@ -85,12 +87,13 @@
       # do a cross join with the lower level TA
       tmp <- merge(BDS, 
                    TA_to_multiple_regions, 
-                   by.x="Area", 
-                   by.y = "SNZ_TA", 
-                   all.x= TRUE, 
-                   all.y=TRUE)
+                   by.x  = "Area", 
+                   by.y  = "SNZ_TA", 
+                   all.x = TRUE, 
+                   all.y = TRUE)
                    
       tmp$Value <- with(tmp, Value * Proportion)
+
       ##
       ##    Check some totals - everything still balancing?
       ##
@@ -129,12 +132,13 @@
    ##
       unique(BDS$Region) %in% unique(regions_concs$Region)
       BDS <- left_join(BDS, regions_concs) %>%
-            rename(TA = Area)
+             rename(TA = Area)
 
    ##
    ## creates a combined region-industry classification that makes the optimal use of the published
    ## regional GDP data.
-      BDS <- BDS %>%
+ 
+     BDS <- BDS %>%
         mutate(
           i = ifelse(RGDPIndustry_2015 %in% c("Forestry, Fishing, and Mining", 
                                               "Electricity, Gas, Water, and Waste services") &
@@ -165,7 +169,6 @@
                                              i, 
                                              paste(RegionGDP, i)))  %>%
         select(-i)
-
 
       #==================together====================
       BDS <- BDS %>%

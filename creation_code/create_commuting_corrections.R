@@ -2,13 +2,13 @@
 ##   Programme:  create_commuting_corrections.R
 ##
 ##   Objective:  In the calculation of TAGDP, information on earnings comes from the place of usual 
-##               residence (i.e. not necessarily where the person works) which creates a potential 
+##               residence (i.e. not necessarily where the person works).  This creates a potential 
 ##               error in appropriating GDP in cases where individuals are commuting across Territorial
-##               Authority boundaries.  To correct for this, script takes Statistics New Zealand 
-##               Census 2013 data on the 'usual residence' and 'workplace address' to identify the 
+##               Authority boundaries.  To correct for this, Statistics New Zealand Census 2013
+##               data on the 'usual residence' and 'workplace address' are used to identify the 
 ##               greatest unidirectional flow & collates the information in a .csv file.  This 
 ##               correction is later called by 'grunt.R' in adjusting the earnings prior to raking
-##                to RGDP and NGDP.
+##               to RGDP and NGDP.
 ##
 ##   Approach:   Import the raw matrix, identify the 'NA' cells, and filter for regions "Not Further 
 ##               Defined".  Data are then placed on a relative scale to the total number of commuters
@@ -97,7 +97,7 @@
           arrange(-Proportion)
 
 ##        
-## 2. Identify the ith biggest commuting shift.  We do the first four biggest places people commute to.
+## 2. Identify the ith largest commuting shift.  We do the first four predominate places people commute to.
 ##     After 4 the percentages are down to < 2%, and some source TAs have no fifth destination eg Stratford.
 ##
         

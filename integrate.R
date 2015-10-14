@@ -77,6 +77,7 @@
       library(riverplot)
       library(Hmisc)
       library(qgraph)
+      library(igraph)
       library(shinyapps)
       library(mbiemaps)
       library(riverplot)

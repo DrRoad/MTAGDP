@@ -1,76 +1,1 @@
-SNZ_TA,Region,Proportion,TA_Region_modified
-Far North District,Northland,1,Far North District
-Whangarei District,Northland,1,Whangarei District
-Kaipara District,Northland,1,Kaipara District
-Auckland,Auckland,1,Auckland
-Thames-Coromandel District,Waikato,1,Thames-Coromandel District
-Hauraki District,Waikato,1,Hauraki District
-Waikato District,Waikato,1,Waikato District
-Matamata-Piako District,Waikato,1,Matamata-Piako District
-Hamilton City,Waikato,1,Hamilton City
-Waipa District,Waikato,1,Waipa District
-South Waikato District,Waikato,1,South Waikato District
-Otorohanga District,Waikato,1,Otorohanga District
-Waitomo District,Waikato,0.9487,Waitomo District 1
-Waitomo District,Manawatu-Wanganui,0.0513,Waitomo District 2
-Taupo District,Waikato,0.7374,Taupo District 1
-Taupo District,Bay of Plenty,0.1431,Taupo District 2
-Taupo District,Hawke's Bay,0.1126,Taupo District 3
-Taupo District,Manawatu-Wanganui,0.0069,Taupo District 4
-Western Bay of Plenty District,Bay of Plenty,1,Western Bay of Plenty District
-Tauranga City,Bay of Plenty,1,Tauranga City
-Opotiki District,Bay of Plenty,1,Opotiki District
-Whakatane District,Bay of Plenty,1,Whakatane District
-Rotorua District,Bay of Plenty,0.6152,Rotorua District 1
-Rotorua District,Waikato,0.3848,Rotorua District 2
-Kawerau District,Bay of Plenty,1,Kawerau District
-Gisborne District,Gisborne,1,Gisborne District
-Wairoa District,Hawke's Bay,1,Wairoa District
-Hastings District,Hawke's Bay,1,Hastings District
-Napier City,Hawke's Bay,1,Napier City
-Central Hawke's Bay District,Hawke's Bay,1,Central Hawke's Bay District
-New Plymouth District,Taranaki,1,New Plymouth District
-Stratford District,Taranaki,0.6813,Stratford District 1
-Stratford District,Manawatu-Wanganui,0.3187,Stratford District 2
-South Taranaki District,Taranaki,1,South Taranaki District
-Ruapehu District,Manawatu-Wanganui,1,Ruapehu District
-Rangitikei District,Manawatu-Wanganui,0.8637,Rangitikei District 1
-Rangitikei District,Hawke's Bay,0.1363,Rangitikei District 2
-Wanganui District,Manawatu-Wanganui,1,Wanganui District
-Manawatu District,Manawatu-Wanganui,1,Manawatu District
-Palmerston North City,Manawatu-Wanganui,1,Palmerston North City
-Tararua District,Manawatu-Wanganui,0.9842,Tararua District 1
-Tararua District,Wellington,0.0158,Tararua District 2
-Horowhenua District,Manawatu-Wanganui,1,Horowhenua District
-Masterton District,Wellington,1,Masterton District
-Kapiti Coast District,Wellington,1,Kapiti Coast District
-Carterton District,Wellington,1,Carterton District
-South Wairarapa District,Wellington,1,South Wairarapa District
-Upper Hutt City,Wellington,1,Upper Hutt City
-Porirua City,Wellington,1,Porirua City
-Lower Hutt City,Wellington,1,Hutt City
-Wellington City,Wellington,1,Wellington City
-Tasman District,Tasman,1,Tasman District
-Nelson City,Nelson,1,Nelson City
-Marlborough District,Marlborough,1,Marlborough District
-Buller District,West Coast,1,Buller District
-Grey District,West Coast,1,Grey District
-Westland District,West Coast,1,Westland District
-Kaikoura District,Canterbury,1,Kaikoura District
-Hurunui District,Canterbury,1,Hurunui District
-Selwyn District,Canterbury,1,Selwyn District
-Waimakariri District,Canterbury,1,Waimakariri District
-Christchurch City,Canterbury,1,Christchurch City
-Ashburton District,Canterbury,1,Ashburton District
-Mackenzie District,Canterbury,1,Mackenzie District
-Timaru District,Canterbury,1,Timaru District
-Waimate District,Canterbury,1,Waimate District
-Waitaki District,Canterbury,0.5961,Waitaki District 1
-Waitaki District,Otago,0.4039,Waitaki District 2
-Queenstown-Lakes District,Otago,1,Queenstown-Lakes District
-Central Otago District,Otago,1,Central Otago District
-Dunedin City,Otago,1,Dunedin City
-Clutha District,Otago,1,Clutha District
-Southland District,Southland,1,Southland District
-Gore District,Southland,1,Gore District
-Invercargill City,Southland,1,Invercargill City
+SNZ_TA,Region,Proportion,TA_Region_modifiedFar North District,Northland,1,Far North DistrictWhangarei District,Northland,1,Whangarei DistrictKaipara District,Northland,1,Kaipara DistrictAuckland,Auckland,1,AucklandThames-Coromandel District,Waikato,1,Thames-Coromandel DistrictHauraki District,Waikato,1,Hauraki DistrictWaikato District,Waikato,1,Waikato DistrictMatamata-Piako District,Waikato,1,Matamata-Piako DistrictHamilton City,Waikato,1,Hamilton CityWaipa District,Waikato,1,Waipa DistrictSouth Waikato District,Waikato,1,South Waikato DistrictOtorohanga District,Waikato,1,Otorohanga DistrictWaitomo District,Waikato,0.9487,Waitomo District 1Waitomo District,Manawatu-Wanganui,0.0513,Waitomo District 2Taupo District,Waikato,0.7374,Taupo District 1Taupo District,Bay of Plenty,0.1431,Taupo District 2Taupo District,Hawke's Bay,0.1126,Taupo District 3Taupo District,Manawatu-Wanganui,0.0069,Taupo District 4Western Bay of Plenty District,Bay of Plenty,1,Western Bay of Plenty DistrictTauranga City,Bay of Plenty,1,Tauranga CityOpotiki District,Bay of Plenty,1,Opotiki DistrictWhakatane District,Bay of Plenty,1,Whakatane DistrictRotorua District,Bay of Plenty,0.6152,Rotorua District 1Rotorua District,Waikato,0.3848,Rotorua District 2Kawerau District,Bay of Plenty,1,Kawerau DistrictGisborne District,Gisborne,1,Gisborne DistrictWairoa District,Hawke's Bay,1,Wairoa DistrictHastings District,Hawke's Bay,1,Hastings DistrictNapier City,Hawke's Bay,1,Napier CityCentral Hawke's Bay District,Hawke's Bay,1,Central Hawke's Bay DistrictNew Plymouth District,Taranaki,1,New Plymouth DistrictStratford District,Taranaki,0.6813,Stratford District 1Stratford District,Manawatu-Wanganui,0.3187,Stratford District 2South Taranaki District,Taranaki,1,South Taranaki DistrictRuapehu District,Manawatu-Wanganui,1,Ruapehu DistrictRangitikei District,Manawatu-Wanganui,0.8637,Rangitikei District 1Rangitikei District,Hawke's Bay,0.1363,Rangitikei District 2Wanganui District,Manawatu-Wanganui,1,Wanganui DistrictManawatu District,Manawatu-Wanganui,1,Manawatu DistrictPalmerston North City,Manawatu-Wanganui,1,Palmerston North CityTararua District,Manawatu-Wanganui,0.9842,Tararua District 1Tararua District,Wellington,0.0158,Tararua District 2Horowhenua District,Manawatu-Wanganui,1,Horowhenua DistrictMasterton District,Wellington,1,Masterton DistrictKapiti Coast District,Wellington,1,Kapiti Coast DistrictCarterton District,Wellington,1,Carterton DistrictSouth Wairarapa District,Wellington,1,South Wairarapa DistrictUpper Hutt City,Wellington,1,Upper Hutt CityPorirua City,Wellington,1,Porirua CityLower Hutt City,Wellington,1,Hutt CityWellington City,Wellington,1,Wellington CityTasman District,Tasman,1,Tasman DistrictNelson City,Nelson,1,Nelson CityMarlborough District,Marlborough,1,Marlborough DistrictBuller District,West Coast,1,Buller DistrictGrey District,West Coast,1,Grey DistrictWestland District,West Coast,1,Westland DistrictKaikoura District,Canterbury,1,Kaikoura DistrictHurunui District,Canterbury,1,Hurunui DistrictSelwyn District,Canterbury,1,Selwyn DistrictWaimakariri District,Canterbury,1,Waimakariri DistrictChristchurch City,Canterbury,1,Christchurch CityAshburton District,Canterbury,1,Ashburton DistrictMackenzie District,Canterbury,1,Mackenzie DistrictTimaru District,Canterbury,1,Timaru DistrictWaimate District,Canterbury,1,Waimate DistrictWaitaki District,Canterbury,0.5961,Waitaki District 1Waitaki District,Otago,0.4039,Waitaki District 2Queenstown-Lakes District,Otago,1,Queenstown-Lakes DistrictCentral Otago District,Otago,1,Central Otago DistrictDunedin City,Otago,1,Dunedin CityClutha District,Otago,1,Clutha DistrictSouthland District,Southland,1,Southland DistrictGore District,Southland,1,Gore DistrictInvercargill City,Southland,1,Invercargill City

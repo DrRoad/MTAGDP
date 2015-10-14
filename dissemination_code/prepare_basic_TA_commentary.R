@@ -1,9 +1,22 @@
-# Generates commentary for use in the Shiny app.  For each TA it identifies the most distinctive industry,
-# the largest in absolute terms, the fastest growing industry, and the three TAs that are closest to it
-# in a notional five dimensional space created by the first five principal components of the TA x industry
-# matrix.   The selected industries are done both for RGDP_industry and NGDP_industry.
+##
+##    Name:       prepare_basic_TA_commentary.R
+##
+##    Objective:  Generates commentary for use in the Shiny app.  For each TA it identifies
+##                the most distinctive industry, the largest in absolute terms, the fastest growing 
+##                industry, and the three TAs that are closest to it in a notional five dimensional
+##                space created by the first five principal components of the TA x industry matrix.
+##
+##                The selected industries are done both for RGDP_industry and NGDP_industry.
+##
+##    Authors:    Peter Ellis, Sector Performance, Ministry of Business, Innovation & Employment
+##
+##    Date:       2014-08-10
+## 
 
-#====================RGDP level==================
+##
+## ====================RGDP level==================
+##
+
 Props_nat <- TAGDP_public %>%
   group_by(RGDP_industry) %>%
   summarise(GDP = sum(GDP)) %>%
@@ -68,7 +81,9 @@ Commentary_rgdp_df <- Biggest_abs %>%
     ),
     Commentary_rgdp = paste(Commentary1, Commentary2, Commentary3, sep = "  ")) 
 
-#=========NGDP level============
+##
+## =========NGDP level============
+##
 Props_nat <- TAGDP_public %>%
   group_by(NGDP_industry) %>%
   summarise(GDP = sum(GDP)) %>%
@@ -134,8 +149,9 @@ Commentary_ngdp_df <- Biggest_abs %>%
     ),
     Commentary_ngdp = paste(Commentary1, Commentary2, Commentary3, sep = "  ")) 
 
-
-#==================="closest" district/city=======================
+## 
+## ==================="closest" district/city=======================
+##
 industry_shares <- TAGDP_public %>%
   filter(Year == max(Year)) %>%
   group_by(TA, NGDP_industry) %>%
@@ -143,8 +159,6 @@ industry_shares <- TAGDP_public %>%
   group_by(TA) %>%
   mutate(GDP = GDP / sum(GDP)) %>%
   spread(NGDP_industry, GDP, fill = 0)
-
-
 
 mod <- princomp(industry_shares[, -1])
 industry_reduced <- data.frame(mod$scores[ , 1:5])
@@ -173,12 +187,10 @@ for(i in 1:nrow(commentary_closest)){
     )
 }
 
-
-
-#===================Combine the various bits of commentary========================
+##
+## ===================Combine the various bits of commentary========================
+##
 Commentary <- Commentary_rgdp_df %>%
   left_join(Commentary_ngdp_df[ , c("TA", "Commentary_ngdp")]) %>%
   left_join(commentary_closest)
-
-
 

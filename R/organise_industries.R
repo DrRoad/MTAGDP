@@ -1,12 +1,31 @@
-### preliminary organisation of industry classes based on ANZSIC06 codes & alignment with REAR industry tables
-## 2015-06-04
 ##
-## Three core functions
-##  organise_leed4s()
-##  organise_rgdps()
-##  organise_ngdps()
+##    Name:       organise_industries.R
+##
+##    Objective:  For some of the graphical output, it is desireable to place the industry levels
+##                in some logical order (e.g. from Primary Industries to Goods-Producing to Service Industries).
+##                This script creates functions to organise the different ANZSIC06 classes utilised in the
+##                creation of MTAGDP.  Including:
+##                  organise_leed4s()   # for the LEED table 4 industries
+##                  organise_rgdps()    # for the Statistics New Zealand Regional GDP industries
+##                  organise_ngdps()    # for the Statistics NZ National GDP industires
+##
+##   Approach:    Functons are designed to take a general column of a data set (here, defined
+##                as 'class_name') for a given industry classification.  The default for each different
+##                classification reflects the column name in the MTAGDP object, but could be used to
+##                organise another column name (e.g. 'LEED4_industry'), depending on user needs.
+##
+##                Internal checks are made to ensure the levels match in the class_name column.
+##
+##    Authors:    Peter Ellis, James Hogan, Franz Smith, Sector Performance,   
+##                  Ministry of Business, Innovation & Employment
+##
+##    Date:       2015-05-29
+##
 
-# general function for LEED4Industries
+##
+## 1. LEED4Industries
+##
+
   organise_leed4s <- function(x, class_name = "LEED4Industry") {
     x <- data.frame(x)  	
   	# set levels
@@ -196,7 +215,10 @@
                                  
          }
 
-# general function for RGDP_industry
+##
+## 2. Regional GDP Industries
+##
+
    organise_rgdps <- function(x, class_name = "RGDP_industry") {
      x <- data.frame(x)
      
@@ -230,7 +252,10 @@
 	       }		                     
 
 
-# general function for NGDP_industry
+##
+## 3. National GDP Industries
+##
+
 organise_ngdps <- function(x, class_name = "NGDP_industry") {
     x <- data.frame(x)
     

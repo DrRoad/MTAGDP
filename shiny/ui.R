@@ -6,49 +6,19 @@ library(dplyr)
 load("dimensions.rda")
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
-   # insert some CSS.  Down the track this would be stored in a separate file.
-   tags$head(
-      tags$style(HTML("
-                      body {
-         font-family: 'Lucida Sans Unicode', 'Lucida Grande', Verdana, Lucida, Helvetica, Arial, Calibri, sans-serif;
-         color: rgb(0,0,0);
-                      font-size: 12.1px;
-                      line-height: 18.15px;
-                      margin-bottom: 9.075px; 
-                      list-style-image: url(http://www.mbie.govt.nz/bullet_double_green_8x8.png);
-                      }
-                      
-                      h2 {
-                      font-size:20px;
-                      line-height: 24px;
-                      color: rgb(0, 139, 198);
-                      }
-                      
-                      
-                      h3 {
-                      font-size:15px;
-                      line-height: 18px;
-                      color: rgb(0, 139, 198);
-                      }
-                      
-                      .selectize-dropdown, .selectize-input, label { 
-            font-family: 'Lucida Sans Unicode', 'Lucida Grande', Verdana, Lucida, Helvetica, Arial, Calibri, sans-serif;
-            font-size: 11px;
-            font-weight: normal;   
-                      }"
-      ))
-      
-      
+    tags$head(
+      includeCSS("mbie-styles.css"),
+      includeCSS("fstyles.css"),
+      tags$script(src = "underscore_throttle.js"),
+      tags$script(src = "iframeResizer.contentWindow.js")
       ),
    
-   
-  
-      column(width = 8, h2("Modelled Territorial Authority Gross Domestic Product")),
-   column(width = 4, 
-          br(), 
+   fixedRow(
+  #h2("Modelled Territorial Authority Gross Domestic Product"),
           checkboxGroupInput("Adjustments", "Adjustments:",
                       choices = c("Inflation" = "defl", "Per population" = "pp"), 
-                      inline = TRUE)),
+                      inline = TRUE)
+                      ),
    
       tabsetPanel(type = "tabs", id = "TheTabs",
                   
@@ -197,17 +167,21 @@ shinyUI(fluidPage(
 <hr>
 <p>Caveats and disclaimers:
 <ul>
-<li>These estimates are at a more detailed level of granularity than available in the Statistics New Zealand official Tier 1 regional GDP series.  
-They are experimental 
-in nature and should be used with caution.	The data are modelled and produced by the Ministry of Business Innovation and Employment (MBIE) 
-(not by Statistics New Zealand), according to the methods outlined in [link to come].
-<li>These estimates are not a Tier 1 statistic and have been created by MBIE for 
-research purposes. While various Statistics New Zealand collections form the source data, 
-Statistics New Zealand will not be held accountable for any error, inaccurate findings or interpretation within the publication.
-<li>One of the sources used in the modelling is a customised dataset, with confidentiality applied, provided by Statistics New Zealand.  
-Access to that data was provided to MBIE by Statistics New Zealand under conditions 
-designed to give effect to the security and confidentiality provisions of the Statistics Act 1975.
-<li>MBIE is not responsible for the results of any actions taken on the basis of this information.
+<li>These estimates are at a more detailed level of granularity than available in the Statistics New Zealand 
+official Tier 1 regional GDP series.  
+They are experimental in nature and should be used with caution.  The data are modelled and produced by 
+the Ministry of Business Innovation and Employment (MBIE) (not by Statistics New Zealand), according to 
+the methods outlined in 
+http://www.mbie.govt.nz/info-services/sectors-industries/regions-cities/research/modelled-territorial-authority-gross-domestic-product/about-mtagdp
+<li>These estimates are not a Tier 1 statistic and have been created by MBIE for research purposes. While 
+various Statistics New Zealand collections form the source data, Statistics New Zealand will not be held 
+accountable for any error, inaccurate findings or interpretation within the data or related publications.
+One of the sources used for the modelling is a customised dataset created in a way that protects confidentiality, 
+provided by Statistics New Zealand.   Access to that data was provided to MBIE by Statistics New Zealand under 
+conditions designed to give effect to the security and confidentiality provisions of the Statistics Act 1975.
+<li>While all care and diligence has been used in processing, analysing, and extracting data and information 
+for this publication, MBIE gives not warranty it is error free and will not be liable for any loss or damage
+suffered by the use directly, or indirectly, of the information.
 </ul>
 <hr>
  <div>

@@ -12,9 +12,9 @@
 ##   Date:       2015-05-18
 ##
 
-
-   tmp <- sqlQuery(TRED, "select Dataset_ID, Dataset from timeseries.dataset")
-   tmp <- tmp[grep("population", tmp$Dataset, ignore.case = TRUE), ]
+   # Check on available population data in TRED
+   #   tmp <- sqlQuery(TRED, "select Dataset_ID, Dataset from timeseries.dataset")
+   #   tmp <- tmp[grep("population", tmp$Dataset, ignore.case = TRUE), ]
 
    ta_pops <- ImportTS2(TRED, "Estimated Resident Population for Territorial Authority Areas, at 30 June(1996+) (Annual-Jun)",
                         stringsAsFactors = FALSE) %>%
@@ -25,9 +25,7 @@
               filter(!TA %in% c("Chatham Islands Territory"),
                                 Year %in% 2000:2012) %>%
               mutate(TA = ifelse(TA == "New Zealand", "All New Zealand", TA))
-
-  
-
-
+##
+   save(ta_pops, file="data/ta_pops.rda")
 
 

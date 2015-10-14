@@ -15,11 +15,9 @@
 ##    Date:       2014-08-10
 ##
 
-
 ##     
-##  incorporating deflator values in TAGDP object     
+##  1.  Incorporating deflator values in TAGDP object     
 ## 
-
    # source the deflator concordances & deflator values
      concord_defl <- read.csv("data_raw/concordances/deflatorIndustries.csv", header=TRUE)
      
@@ -29,16 +27,20 @@
                    mutate(GDP_real = GDP * ind.deflator)   %>%
                    data.frame()
 
-   if(nrow(TAGDP_defl) != nrow(TAGDP_grunt) | sum(is.na(TAGDP_defl$GDP_real)) > 0){
-     print(TAGDP_defl %>% filter(is.na(GDP_real)) %>% select(LEED4Industry, deflatorIndustry) %>% unique())
-     stop("something went wrong with the merge with the deflators")
+     if(nrow(TAGDP_defl) != nrow(TAGDP_grunt) | sum(is.na(TAGDP_defl$GDP_real)) > 0){	
+          print(TAGDP_defl %>% 
+	           filter(is.na(GDP_real)) %>% 
+	           select(LEED4Industry, deflatorIndustry) %>% 
+	           unique())
+          stop("something went wrong with the merge with the deflators")
+      }
 
-  }
-
+   # save a copy of the TAGDP_defl object for the 2012-2014 forecasts
+     save(TAGDP_defl, file = "data_intermediate/TAGDP_defl.rda")
+  
 ##
-##  create object for analytical use & output generation
+##  2. Create object for analytical use & output generation
 ##
-
    # first collapse the industry classes and modified TAs
      TAGDP_public <- TAGDP_defl %>%
                       group_by(Year, NGDP_industry, RGDP_industry, TA, Region) %>%
@@ -51,8 +53,7 @@
                           ) %>%
                        ungroup()
 
-   # calculate GDP and real GDP per capita for final TAGDP object
-     
+   # calculate GDP and real GDP per capita for final TAGDP object    
        TAGDP_public <- left_join(TAGDP_public, ta_pops, by=c("Year", "TA"))
 
        TAGDP_public <- TAGDP_public %>%
@@ -61,16 +62,18 @@
                         select(-Population) %>%
                         data.frame()       
 
+       if(sum(TAGDP_public$GDP) != sum(TAGDP_grunt$GDP)){
+          stop("TAGDP_public has a different sum(GDP) to TAGDP_grunt.  Not right.")
+        }
+   
+##
+## 3.  Save final TAGDP object for exploratory data analyses & dump to .csv
+##
 
-   if(sum(TAGDP_public$GDP) != sum(TAGDP_grunt$GDP)){
-     stop("TAGDP_public has a different sum(GDP) to TAGDP_grunt.  Not right.")
-  }
+       save(TAGDP_public, file = "data/TAGDP_public.rda")                  
    
-   ## save final TAGDP object for exploratory data analyses
-   save(TAGDP_public, file = "data/TAGDP_public.rda")                  
-   
-   ## csv dump for web consumption                 
-   write.csv(TAGDP_public, file="data/TAGDP_public.csv", row.names=FALSE)
+     # csv dump for web consumption                 
+       write.csv(TAGDP_public, file = "data/TAGDP_public.csv", row.names=FALSE)
    
 
 

@@ -1,6 +1,13 @@
-### creates an overview plot showing TAGDP average annual growth rate & tendencies
-## Peter Ellis, MBIE Sector Performance
-# 2015-05-28 
+##
+##    Name:       dotplot_orderedRibbon.R
+##
+##    Objective:  Creates an overview plot showing MTAGDP annual growth rate, time series trends,
+##                and North to South gradients.
+##
+##    Authors:    Peter Ellis, Sector Performance, Ministry of Business, Innovation & Employment
+##
+##    Date:       2015-05-28
+##
 
 # call to core functionality & the data
   library(dplyr)

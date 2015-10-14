@@ -1,5 +1,5 @@
 ##
-##    Name:  import_NGDP.R
+##    Name:       import_NGDP.R
 ##
 ##    Objective:  This stage or the process extracts national GDP measures from TRED and aligns
 ##                inconsistencies between the industries in National GDP and the industries derived
@@ -30,14 +30,13 @@
    ##
    ##    Carve out only the years within RGDP, and rename measure variable
    ##
-      ngdp_pop <- subset(ngdp, Year %in% unique(rgdp_pop_pub$Year))
-      names(ngdp_pop)[names(ngdp_pop) == "NGDP"] <- "Freq"
+         ngdp_pop <- subset(ngdp, Year %in% unique(rgdp_pop_pub$Year))
+         names(ngdp_pop)[names(ngdp_pop) == "NGDP"] <- "Freq"
 
    ##
    ##    We also need to get GST, Import duties, and Other Taxes on Production which are not "industries" so 
    ##       aren't included in the ngdp series imported earlier, but are included in RGDP so need to be added back and treated as an 
    ##       industry for this work
-   ##
    ##
 
          GST_Duties_Tax <- ImportTS2(TRED, "SNE - Series, GDP(P), Nominal, Actual, Total (Annual-Mar)")
@@ -50,7 +49,7 @@
                                      na.rm = TRUE)
                                    )
          GST_Duties_Tax$NGDP_industry <- "GST on Production, Import Duties and Other Taxes"                       
-         GST_Duties_Tax <- subset(GST_Duties_Tax, Year %in% unique(rgdp_pop_pub$Year))
+         GST_Duties_Tax               <- subset(GST_Duties_Tax, Year %in% unique(rgdp_pop_pub$Year))
 
   ##
   ##  Combine the GDP values with GST into a single object

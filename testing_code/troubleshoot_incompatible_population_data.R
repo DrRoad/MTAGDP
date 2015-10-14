@@ -1,11 +1,11 @@
 ##
 ##    Name:       troubleshoot_incompatible_population_data.R
 ##
-##    Objective:  After calculating TAMGDP, tests for differences in the marginal totals can be
+##    Objective:  After calculating MTAGDP, tests for differences in the marginal totals can be
 ##                a useful indicator of the accuracy in the modelled estimates.  As there are a
 ##                number of different versions of GDP and industry tables in the LEED, there are
 ##                individual tests to validate between these different sources used in the stages
-##                of calculating TAMGDP
+##                of calculating MTAGDP
 ##
 ##   Approach:    Comparisons between tables are made and individual tests are printed to the
 ##                 screen.
@@ -21,7 +21,7 @@ print("Printing the most problematic conflicts between different sets of margina
 #=======GDP===========
 
 #----------------public RGDP v NGDP-------------
-# ok, what if the RGDP figures are fundamentally nto compatible with the NGDP ones for some year - 
+# ok, what if the RGDP figures are fundamentally not compatible with the NGDP ones for some year - 
 # industry combinations.  How to check this?
 
 # I make a little concordance of the two

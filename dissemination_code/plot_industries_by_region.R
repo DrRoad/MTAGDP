@@ -11,51 +11,43 @@
 ##
 
 ##
-##    Notes:      FS: It is interesting to compare these outputs with the plot_industries_by_TA.R
-##                results, as it shows how well the regions "represent" the detail of the modelled
-##                GDP at the TA level.
+##  1. Create a list of the regions for the loop
 ##
+       allRegions <- unique(TAGDP_public$Region)
+       allRegions <- allRegions[order(allRegions)]
 
 ##
-##  Create a list of the regions for the loop
+##  2. Output all regions to a single PDF
 ##
-
-  allRegions <- unique(TAGDP_public$Region)
-  allRegions <- allRegions[order(allRegions)]
-
-##
-##  Output all regions to a single PDF
-##
-
-   CairoPDF("dissemination_outputs/top_industries_by_region.pdf", 8, 8)
-   for (i in 1: length(allRegions)){
-       tmp <- TAGDP_public %>%
-              filter(Region == allRegions[i]) %>%
-              group_by(Year, NGDP_industry) %>%
-              summarise(GDP = sum(GDP)) %>%
-              filter(GDP > 0) %>%
-              ungroup()
+      CairoPDF("dissemination_outputs/top_industries_by_region.pdf", 8, 8)
+         for (i in 1: length(allRegions)){
+            tmp <- TAGDP_public %>%
+                   filter(Region == allRegions[i]) %>%
+                   group_by(Year, NGDP_industry) %>%
+                   summarise(GDP = sum(GDP)) %>%
+                   filter(GDP > 0) %>%
+                   ungroup()
     
-   tmpAverage <- tmp %>%
-                 group_by(NGDP_industry) %>%
-                 summarise(GDP = mean(GDP)) %>%
-                 data.frame()
+        tmpAverage <- tmp %>%
+                      group_by(NGDP_industry) %>%
+                      summarise(GDP = mean(GDP)) %>%
+                      data.frame()
   
-   tmp$NGDP_industry <- factor(tmp$NGDP_industry, levels=tmpAverage$NGDP_industry[order(tmpAverage$GDP)])
+        tmp$NGDP_industry <- factor(tmp$NGDP_industry, levels = tmpAverage$NGDP_industry[order(tmpAverage$GDP)])
   
-   biggest <- tmpAverage[order(-tmpAverage$GDP), "NGDP_industry"][1:20]
-   tmp     <- subset(tmp, NGDP_industry %in% biggest)
+        biggest <- tmpAverage[order(-tmpAverage$GDP), "NGDP_industry"][1:20]
+        tmp     <- subset(tmp, NGDP_industry %in% biggest)
   
-   print(
-      ggplot(tmp, aes(y=NGDP_industry, x=GDP, colour=as.numeric(Year))) +
-        geom_point() +
-        scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                             breaks = seq(from = 2000, to =2012, length.out =4)) +
-        scale_x_continuous("\nContribution to GDP ($m)", label=dollar) +
-        labs(y="") +
-        ggtitle(paste(allRegions[i], "- top 20 industries"))
-    ) 
+        print(
+           ggplot(tmp, aes(y=NGDP_industry, x=GDP, colour=as.numeric(Year))) +
+             geom_point() +
+             scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
+                                  breaks = seq(from = 2000, to = 2012, length.out = 4)) +
+             scale_x_continuous("\nContribution to GDP ($m)", label = dollar) +
+             labs(y = "") +
+             ggtitle(paste(allRegions[i], "- top 20 industries"))
+          ) 
   
-  }
-  dev.off()
+        }
+      dev.off()
 

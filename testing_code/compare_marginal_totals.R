@@ -2,12 +2,11 @@
 ##    Name:       compare_marginal_totals.R
 ##
 ##    Objective:  Compare the marginal totals from the different data sources to the results
-##                of the TAMGDP estimates - including National, Regional GDP and LEED tables.
+##                of the MTAGDP estimates - including National, Regional GDP and LEED tables.
 ##                The script produces output that is printed to the screen & combines visual 
 ##                outputs into a single PDF.
 ##
-##    Authors:    Peter Ellis, Sector Performance,   
-##                  Ministry of Business, Innovation & Employment
+##    Authors:    Peter Ellis, Sector Performance, Ministry of Business, Innovation & Employment
 ##
 ##    Date:       2014-10-06
 ##

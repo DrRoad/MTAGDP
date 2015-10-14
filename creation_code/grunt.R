@@ -6,14 +6,15 @@
 ##                matching the employee and earnings information from the BDS and LEED tables, correcting
 ##                for the "commuter effect", and matching published & custom regional, and National GDP.
 ##
-##   Approach:    The {survey} library's rake function is used to align the different measures of employees,
+##    Approach:   The {survey} package's rake function is used to align the different measures of employees,
 ##                earnings and GDP across the tables.  The measures of economic activity are derived from
-##                 the BDS employment data, which has had different industry and geographic classifications
+##                the BDS employment data, which has had different industry and geographic classifications
 ##                appended to it.  Using these different region and industry classifications, the BDS data
 ##                are "scaled" up and down to LEED estimates of regional earnings.  The LEED tables estimate
 ##                the value of a Compensation of Employment proxy for each industry and each region.  "Earnings"
 ##                is a closer measure to value added than earnings numbers, and the process of raking LEED over 
-##                the BDS.
+##                the BDS makes the resultant weights (i.e. earnings) a closer poximity to GDP in the second
+##                stage of raking.
 ##
 ##                The correct_commuting() function is used to modify the earnings values accoring to the
 ##                relative amount of "commuters" (i.e. that have different home and business addresses) in

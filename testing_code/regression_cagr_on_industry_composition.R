@@ -14,7 +14,15 @@
 ##
 ###########################################################################
 
+library(mbie)
+library(mbieDBmisc)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(Cairo)
+library(extrafont)
 
+      TRED    <- odbcConnect("TRED_Prod")
 
 ###########################################################################
 ## anaysis 1
@@ -76,6 +84,10 @@ g1 <- ggplot(rgdp_cagr_00_to_12_share00, aes(x=gpd_share00, y=cagr_00_to_12)) +
   theme(legend.position="bottom")
 print(g1)
 ## regression is not ideal, the industry share cannot interprete GDP growth well. 
+CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_regions.pdf", 7, 7)
+print(g1)
+dev.off()
+
 
 g2 <- ggplot(rgdp_cagr_00_to_12_share00, aes(x=gpd_share00, y=cagr_00_to_12)) +
   geom_point(aes(colour=Industry),size = 3 ) +
@@ -87,6 +99,9 @@ g2 <- ggplot(rgdp_cagr_00_to_12_share00, aes(x=gpd_share00, y=cagr_00_to_12)) +
   theme(legend.position="bottom")
 print(g2)
 ## It seems that the points are clustered by industry rather than Area. 
+CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_industries.pdf", 7, 7)
+print(g2)
+dev.off()
 
 
 dtf <- rgdp_cagr_00_to_12_share00 %>%
@@ -112,6 +127,11 @@ g3 <-
   ylab("GDP growth (CAGR 2000-2012)")
 print(g3)
 
+CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_regions.corr.pdf", 7, 7)
+print(g3)
+dev.off()
+
+
 
 g4 <- 
   dtf %>% mutate(Industry = wrap(paste0(Industry," (",cor_by_industry,")"), 50)) %>%
@@ -124,6 +144,10 @@ g4 <-
   ylab("GDP growth (CAGR 2000-2012)")
 print(g4)
 
+CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_industries.corr.pdf", 7, 7)
+print(g4)
+dev.off()
+
 
 g5 <- 
   dtf %>%
@@ -134,6 +158,11 @@ g5 <-
   xlab("GDP industry share") +
   ylab("GDP growth (CAGR 2000-2012)")
 print(g5)
+
+CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_overall.corr.pdf", 7, 7)
+print(g5)
+dev.off()
+
 ###########################################################################
 
 
@@ -250,6 +279,4 @@ confint(fit.best, level = 0.95)
   select(rowname, Area, Manufacturing, one_of("Public Administration and Safety")) %>%
   data.frame(fitted.values = fit.best$fitted.values) %>%
   arrange(fitted.values)
-
-
 

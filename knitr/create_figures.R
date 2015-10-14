@@ -20,7 +20,8 @@
 
   # From compare_marginal_totals.R
 # comparison with marginal totals of published Regional GDP
-  CairoPDF("figures/compare_marginal_totals.rgdp.pdf", 16, 11)
+#  CairoPDF("figures/compare_marginal_totals.rgdp.pdf", 16, 11)
+   CairoPNG("figures/compare_marginal_totals.rgdp.png", 6000, 6000, dpi=600)
      print(ggplot(comps0, aes(x=RGDP_industry, y = OutPerc / 100, colour = Year)) +
        geom_point() +
        facet_wrap(~RegionGDP) +
@@ -34,7 +35,8 @@
     dev.off()
 
 # comparison with marginal totals of published National GDP
-  CairoPDF("figures/compare_marginal_totals.ngdp.pdf", 16, 11)
+#  CairoPDF("figures/compare_marginal_totals.ngdp.pdf", 16, 11)
+   CairoPNG("figures/compare_marginal_totals.ngdp.png", 6000, 6000, dpi=600)
      print(ggplot(comps2, aes(x=NGDP_industry, y = OutPerc / 100, colour = Year)) +
         geom_point() +
         coord_flip() +
@@ -254,7 +256,8 @@ dev.off()
              cagr               = CAGR(ratio = GDP[Year == LastYear] / GDP[Year == 2009],
                                     period = LastYear - 2009)                                                                                                                                                                                
              ) %>%
-        filter(RGDP_industry == "Rental, Hiring and Real Estate Services") %>%
+        # filter(RGDP_industry == "Rental, Hiring and Real Estate Services") %>%
+          filter(RGDP_industry == "Wholesale Trade") %>%
           ungroup()
 
    ## Merge the taGDP with the TA map
@@ -278,11 +281,30 @@ dev.off()
                               label = percent, 
                               limits = c(-1, 1) * max(abs(combined$cagr) / 100)) + # to make the scale symettrical around zero
                           coord_map() +
-                          ggtitle("Estimated growth and absolute size in Rental, Hiring and Real Estate Services GDP")
+                          ggtitle("Estimated growth and absolute size of GDP for Wholesale Trade")
               print(TAGDP.Map)
                 
          dev.off()
   
+##
+## 4. Net impact of commuting correction
+##
+
+
+#CairoPDF("figures/net_impact_commuting_correction.pdf", 11, 8)
+CairoPNG("figures/net_impact_commuting_correction.png", 6000, 6000, dpi=600)
+  print(TAGDP_grunt %>%
+        group_by(TA) %>%
+        summarise(Original            = sum(Earnings),
+                  Commuting_corrected = sum(Earnings_commuting_corrected),
+                  Ratio               = Commuting_corrected / Original) %>%
+        arrange(Ratio) %>%
+       mutate(TA = factor(TA, levels = TA)) %>%
+       ggplot(aes(y = TA, x = Ratio)) +
+             geom_point() +
+             ggtitle("Net impact of commuting correction")
+   )
+dev.off()
   
   
   

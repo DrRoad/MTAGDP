@@ -4,14 +4,14 @@
 ##    Objective:  This script prepares copies of the data that are used in the deployment
 ##                of the shinyapp.
 ##
-##    Authors:    Peter Ellis, Sector Performance,   
-##                  Ministry of Business, Innovation & Employment
+##    Authors:    Peter Ellis, Sector Performance, Ministry of Business, Innovation & Employment
 ##
 ##    Date:       2015-05-14
 ##
 
-
-#===============Facts====================
+##
+## ===============Facts====================
+##
 
 #-------------------------
   tmp <- TAGDP_public %>%
@@ -70,10 +70,18 @@ tagdp_shiny <- rbind(tagdp_shiny, AllNZTotals)
                          GDP_real = sum(GDP_real)) %>% 
                ungroup() 
 
+##
+## =====================Dimensions=================
+##
 
-#=====================Dimensions=================
-# We need the data frame we usually use to map TAs as it has the centres of each TA
-  data(ta_simpl_gg)
+## We need the data frame we usually use to map TAs as it has the centres of each TA
+# first check if mbiemaps package is available or load local copy
+if(("mbiemaps" %in% installed.packages()[, "Package"])) {
+	library(mbiemaps)
+   data(ta_simpl_gg)
+} else {
+	load("data/ta_simpl_gg.rda")
+}
 
 # some environments have a corrupt version of ta_simpl_gg with bad FULLNAMEs so we need to check and fix
   ta_simpl_gg <- ta_simpl_gg %>%
@@ -96,16 +104,18 @@ tagdp_shiny <- rbind(tagdp_shiny, AllNZTotals)
                      label = c("High level (recommended)", "Detailed (caution)"),
                      stringsAsFactors = FALSE)
 
-#===============colours===================
-
+##
+## ===============colours===================
+##
   set.seed(123)
   ta_cols <- data_frame(TA = c(TAs, "Black"), TA_short = c(TAs_short$TA, "Black"),
                         Col = c(sample(colorRampPalette(mbie.cols())(length(TAs))), "Black"))
 
 ta_cols[ta_cols$TA == "All New Zealand", "Col"] <- "Black"
 
-#=====================save===============
-
+##
+## =====================save===============
+##
   save(TAs, TAs_short, Industries_NGDP, Industries_RGDP, Types, file = "shiny/dimensions.rda")
   save(ta_pops, file = "shiny/ta_pops.rda")     
   save(tagdp_shiny, TheTotals, file = "shiny/TAGDP_data.rda")

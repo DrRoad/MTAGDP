@@ -5,7 +5,6 @@
 ##                This programme reads in concordances which have been derived outside the processing system
 ##                to enable comparisons between data sources.
 ##
-##
 ##    Authors:    Peter Ellis, James Hogan, Franz Smith, Sector Performance, Ministry of Business, Innovation &  
 ##                  Employment
 ##

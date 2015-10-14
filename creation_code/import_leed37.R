@@ -2,13 +2,15 @@
 ##    Programme:  import_leed37.R
 ##
 ##    Objective:  LEED data are used to estimate how much economic value is generated within each TA
-##                and low-level industry.  This programme Imports and concords a csv downloaded from
+##                and low-level industry.  These data are used as sample margins for 'raking' to the
+##                employee numbers (i.e. weights) from the Business Demography Statistics.
+##
+##    Approach:  This programme Imports and concords a csv downloaded from
 ##                NZ.Stat LEED table 37.  Select All Regions, just the lowest level of the industry hierarchy
 ##                all quarter.
 ##
-##    Authors:    Peter Ellis, Sector Performance,   
-##                  Ministry of Business, Innovation & Employment
-##
+##    Authors:    Peter Ellis, Sector Performance, Ministry of Business, Innovation & Employment
+##                  
 ##    Date:       2014-08-10
 ##
 
@@ -70,13 +72,13 @@
       leed37$Year <- 2000 + as.numeric(substring(leed37$Quarter, 5, 6))
 
       # fix the problems with the 1990s appearing as 2099 instead of 1999:
-      leed37$Year <- with(leed37, ifelse(Year > 2080, Year - 100, Year))
+        leed37$Year <- with(leed37, ifelse(Year > 2080, Year - 100, Year))
 
-      leed37$YEMar <- with(leed37, ifelse(substring(leed37$Quarter, 1, 3) == "Mar", Year, Year + 1))
+        leed37$YEMar <- with(leed37, ifelse(substring(leed37$Quarter, 1, 3) == "Mar", Year, Year + 1))
 
-      leed37 <- leed37 %>%
-          group_by(TA_Region_modified, Region, SNZ_TA, YEMar) %>%
-          summarise(TotalEarnings = sum(TotalEarnings))      
+        leed37 <- leed37 %>%
+                  group_by(TA_Region_modified, Region, SNZ_TA, YEMar) %>%
+                  summarise(TotalEarnings = sum(TotalEarnings))      
                       
    ##
    ##    Get ready to use as population in raking a survey object

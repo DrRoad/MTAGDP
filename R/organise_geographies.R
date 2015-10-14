@@ -1,11 +1,26 @@
-## TEST functions to organise geographic north-to-south arrangement of TAs and industry levels
-# 2015-05-29
+##
+##    Name:       organise_geographies.R
+##
+##    Objective:  For some of the graphical output, it is desireable to place the TAs or RCs
+##                in some North to South (or reverse) order.  This script creates some functions
+##                to do that, as well as shorten the names for plots.
+##
+##   Approach:    Functons are designed to take a general column of a data set (here, defined
+##                as 'class_name') for a given regional classification.  The default for organise_tas
+##                is the column "TA" in the MTAGDP data object, but it could be something else (e.g.
+##                "Territorial_Authority").  The similar principle applies to the organise_rcs.
+##
+##                Internal checks are made to ensure the levels match in the class_name column.
+##
+##    Authors:    Peter Ellis, James Hogan, Franz Smith, Sector Performance,   
+##                  Ministry of Business, Innovation & Employment
+##
+##    Date:       2015-05-29
+##
 
-## two functions for organising geographies:
-##  organise_tas  # for Territorial Authorities
-##  organise_rcs  # for Regional Councils
-
-## general function to truncate Territorial Authority names & organise the levels N to S
+##
+##  1. Territorial Authorities
+##  
    organise_tas <- function(x, class_name = "TA") {
   	  
   	     x <- data.frame(x)
@@ -91,7 +106,10 @@
 
           }
 
-## general function to truncate Regional Council names & organise them N to S
+##
+##  2. Regional Councils
+##
+
    organise_rcs <- function(x, class_name = "Region") {
   	  
   	     x <- data.frame(x)

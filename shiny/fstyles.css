@@ -1,0 +1,72 @@
+.row {
+   margin-right: 0px;
+   margin-left: 0px;
+}
+
+div.float {
+   float:left;
+   padding-bottom: 10px;
+}
+
+div.divleft {
+   padding-right: 20px;
+}
+
+div.divwell {
+   padding-right: 20px;
+   width: 280px;
+}
+
+div.checkboxcombo div.checkboxcombo-all{
+   margin-top: 0px;
+   margin-bottom: 20px;
+}
+
+select#country {
+   width: 250px;
+}
+
+table.ftable {
+   border-top: 1px solid;
+   border-bottom: 1px solid;
+   text-align: right;
+   font-size: 14px;
+}
+table.ftable tr:first-child {
+   border-bottom: 1px solid;
+}
+table.ftable tr:first-child td {
+   font-weight: bold;
+   padding: 2px;
+}
+table.ftable sup {
+   font-weight: normal;
+}
+table.ftable tr:first-child td[colspan] {
+   text-align: center;
+}
+table.ftable td:first-child {
+   text-align: left;
+   padding-left: 0px;
+}
+table.ftable td {
+   padding-left: 1em;
+}
+table.ftable caption {
+   text-align: right;
+   font-size: 10px;
+   padding: 0px;
+}
+
+svg.arrows {
+   width: 16px;
+   height: 19px;
+}
+
+div.ggvis-output-container g.type-line {
+   pointer-events: none;
+}
+
+div.d3tree2 svg g.children text, div.d3tree2 svg g.depth text {
+   font-size: 11pt;
+}

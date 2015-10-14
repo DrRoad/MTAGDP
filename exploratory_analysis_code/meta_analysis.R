@@ -1,21 +1,29 @@
-# Meta analysis of the repository itself ie how many lines of code, what size data, etc
-# Peter Ellis, 12 April 2014
+##
+##    Name:       meta_analysis.R
+##
+##    Objective:  Conducts a "meta analysis" of the repository itself ie how many lines of code, 
+##                what size data, et cetera.
+##
+##    Authors:    Peter Ellis, Sector Performance, Ministry of Business, Innovation & Employment
+##
+##    Date:       2015-04-212
+##
 
-source("R/meta_analysis_helper_functions.R")
+# call to functions to support the meta-analysis
+  source("R/meta_analysis_helper_functions.R")
 
 # analyse this whole repository and give its name
-mtagdp <- AnalyseRepository(".")
-mtagdp$repo <- "Modelled Territorial Authority Gross Domestic Product"
+  mtagdp      <- AnalyseRepository(".")
+  mtagdp$repo <- "Modelled Territorial Authority Gross Domestic Product"
 
 # overall summary
-summary(mtagdp)
+  summary(mtagdp)
 
 # distribution of length of scripts
-plot(mtagdp)
+  plot(mtagdp)
 
 # what are all those files? print to screen:
-mtagdp
-
+  mtagdp
 
 # what words were used in that 5000+ lines of code?
 CairoPDF("exploratory_output/wordclouds.pdf", 11, 8)
