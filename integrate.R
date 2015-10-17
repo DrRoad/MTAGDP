@@ -89,9 +89,7 @@
       # and asking for your password when it gets to the deploy app stage.
       if(!exists("creds") & Sys.getenv("USERDNSDOMAIN") == "WD.GOVT.NZ"){
         creds <- AskCreds(Title = "User Log In Name and Password", startuid = "", returnValOnCancel = "ID_CANCEL")   
-        options(RCurlOptions = list(proxy = 'http://proxybcw.wd.govt.nz:8080',
-                                    proxyusername = creds$uid, 
-                                    proxypassword = creds$pwd))
+        options(RCurlOptions = list(XXX))
       }
       
     # call to additional functions    
