@@ -12,6 +12,9 @@
 ##   Date:       2015-05-18
 ##
 
+##   Notes:      Extended the dates to include figures for the mtagdp_forecasts  (FS: 2015-12-23)
+##
+
    # Check on available population data in TRED
    #   tmp <- sqlQuery(TRED, "select Dataset_ID, Dataset from timeseries.dataset")
    #   tmp <- tmp[grep("population", tmp$Dataset, ignore.case = TRUE), ]
@@ -23,7 +26,7 @@
                      Population = Value) %>%
               select(Year, TA, Population) %>%
               filter(!TA %in% c("Chatham Islands Territory"),
-                                Year %in% 2000:2012) %>%
+                                Year %in% 2000:2015) %>%
               mutate(TA = ifelse(TA == "New Zealand", "All New Zealand", TA))
 ##
    save(ta_pops, file="data/ta_pops.rda")

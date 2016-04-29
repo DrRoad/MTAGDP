@@ -35,8 +35,6 @@
           stop("something went wrong with the merge with the deflators")
       }
 
-   # save a copy of the TAGDP_defl object for the 2012-2014 forecasts
-     save(TAGDP_defl, file = "data_intermediate/TAGDP_defl.rda")
   
 ##
 ##  2. Create object for analytical use & output generation
@@ -65,15 +63,4 @@
        if(sum(TAGDP_public$GDP) != sum(TAGDP_grunt$GDP)){
           stop("TAGDP_public has a different sum(GDP) to TAGDP_grunt.  Not right.")
         }
-   
-##
-## 3.  Save final TAGDP object for exploratory data analyses & dump to .csv
-##
-
-       save(TAGDP_public, file = "data/TAGDP_public.rda")                  
-   
-     # csv dump for web consumption                 
-       write.csv(TAGDP_public, file = "data/TAGDP_public.csv", row.names=FALSE)
-   
-
 

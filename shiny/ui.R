@@ -65,7 +65,7 @@ shinyUI(fluidPage(
                                           inline = TRUE)
                               ),
             sliderInput("DateRange", "Specify a date range:", 
-              min = 2000, max = 2012, value = c(2000, 2012),
+              min = 2000, max = 2014, value = c(2000, 2014),
               sep = ""),
             conditionalPanel(condition = "input.GrowthPlotType != 'Show whole time series'",
                              checkboxInput("Colour", "Brightly coloured areas?", value = TRUE)
@@ -192,8 +192,12 @@ Creative Commons Attribution 3.0 New Zealand License</a>.</p>
 </div>
 
 <div>
-<p><a href = "http://nz-mbie.github.io/MTAGDP/"><img src="Octocat.jpg" alt = "GitHub Octocat logo" title = "Link to source code on GitHub" width = "80" height = "66"></a>
-Go to GitHub to get the <a href = "http://nz-mbie.github.io/MTAGDP/">source code</a> the Ministry used to create these modelled estimates and this web app.
+<p><a href = "https://github.com/nz-mbie/MTAGDP"><img src="Octocat.jpg" alt = "GitHub Octocat logo" title = "Link to source code on GitHub" width = "80" height = "66"></a>
+Go to GitHub to get the <a href = "https://github.com/nz-mbie/MTAGDP" target="_blank">source code [External Link]</a> the Ministry used to create these modelled estimates and this web app.
+</p>
+</div>
+<div>
+<p> Some mobile users may wish to <a href = "https://mbienz.shinyapps.io/mtagdp" target="_blank">open the tool in its own window [External link]</a> to make best use of screen real estate.
 </p>
 </div>
 

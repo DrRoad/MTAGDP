@@ -1,0 +1,109 @@
+% Skeleton narrative for DTS | RTS discussion document
+% 2015-11-13
+
+% !TeX program = XeLaTeX
+% !Rnw weave = knitr
+
+% The first thing is to tell LaTeX that this is a document in the MBIE word format
+\documentclass{mbie-report-simpl}
+
+   % Load necessary Latex packages ---------------------------------------
+  \usepackage[utf8]{inputenc}
+	\usepackage{float} % for graphics floating
+	\usepackage{booktabs} % for \midrule etc. in tables
+	\usepackage{amsmath} % for mathematics
+	\usepackage{multicol} % use multiple columns
+
+	% Load necessary Latex packages ---------------------------------------
+
+	\usepackage[firstpage]{draftwatermark}
+
+		% Title page settings -------------------------------------------------
+		\classification{ DRAFT - IN CONFIDENCE}
+		\issn{}
+
+		\title{Forecasting MTAGDP to estimate totals for `between years'}{Forecasting MTAGDP to estimate totals for `between years'}
+		\subtitle{Summary of methodology and results of forecasts of MTAGDP}
+		\author{SECTOR TRENDS\\
+	   EVIDENCE, MONITORING \& GOVERNANCE\\
+	   CORPORATE, GOVERNANCE \& INFORMATION
+		}      
+		\date{\today}
+		% Title page settings -------------------------------------------------
+
+%%
+%%  The document begins here
+%%	
+	\begin{document}
+
+	   % Make title pages and create table of contents -----------------------
+		\maketitle
+	% 	%% hide page number
+	% 	\pagenumbering{roman}
+	% 	\thispagestyle{empty}
+	% 	%% table of contents
+	% 	{\large\tableofcontents}
+		\clearpage
+		%% start counting page numbers
+		\pagenumbering{arabic}
+		\setcounter{page}{1}
+		% Make title pages and create table of contents -----------------------
+
+    \section{Background}
+
+The Modelled Territorial Authority Gross Domestic Product (MTAGDP), released in October 2015, is a synthesised data product that provides GDP estimates for industries at the Territorial Authority level that reconcile to official published statistics at the National and Regional levels.  Because part of the source data for creating MTAGDP (i.e. Business Demography Statistics, Linked Employer--Employee Database) are only available every three years, the last year of the MTAGDP series is 2012.  As one of the core reasons for developing MTAGDP was to support policy development and research which needs more up-to-date data, MBIE's Sector Trends team has developed a method to make estimates for `between' years, which extends the series to match annual published Regional and National GDP figures from Statistics New Zealand.  This report summarises the methodology used and preliminary results.
+
+
+    \section{Methodology \& Results}
+
+\subsection{General Approach}  % (fold)
+	\label{sub:general_approach}
+The method used for extending the MTAGDP series is based on traditional time-series forecasting techniques.  A technique referred to as \emph{Hierarchical [or Grouped] Time Series} uses disaggregated relationships of distinct categories in a time series (e.g. product types in geographic locations) in a way that reconciles across levels in the hierarchy or across groups \footnote{Hyndman, R.J., R.A. Ahmed, G. Athanasopoulos and H.L. Shang (2011) Optimal combination forecasts for hierarchical time series. Computational Statistics and Data Analysis, 55(9), 2579–2589.
+\url{http://robjhyndman.com/papers/hierarchical/}
+\url{http://robjhyndman.com/hyndsight/gts/}
+\url{https://cran.r-project.org/web/packages/hts/index.html}}.  In other words, these methods allow for forecasts at each level to be summed to provide information of the level above or across groups.
+
+The MTAGDP data series is well suited for this technique, as the modelled data represent industries within Territorial Authorities that form natural grouped sets.  And, because the forecast estmiates can be aggregated into Regional and National GDP figures, it provides a means to ensure that the forecasted values match the published total values at these levels.
+
+% subsection general_approach (end)
+
+\subsection{Data treatment and forecasting}  % (fold)
+	\label{sub:data_treatment}
+Because several Territorial Authorities are split across several Regional Councils, the data used for forecasting were based on a `modified Territorial Authority' which apportions industries according to the relative area across multiple Regional Councils.  This provided a more accurate representation of industries and geography when aggregating to the Regional Council level.  Groupings were formed on the `modified' TA and industry classifications from National GDP, resulting in 4045 [i.e. 56 industries across 75 `modified Territorial Authorities'\footnote{Because some industries are not present in all TAs the total number of combinations is less than the expected 4200.}] individual series.
+
+As the MTAGDP series is particularly short for developing a time-series model, the time-series was disaggregated into monthly time steps to provide a greater number of points for developing an ARIMA model\footnote{Using the R package \emph{tempdisagg} \url{https://cran.r-project.org/web/packages/tempdisagg/index.html}}.  After forecasting, these data were aggregated back to yearly time steps.
+
+The grouped time series function used an `optimal combination' forecasting method, which creates an independent forecast for each series in the hierarchy.  As these forecasts are created independently, they do not necessarily add up according to the hierarchy or group structure.  The `optimal combination' method combines the independent forecasts and generates a set of revised forecasts that resemble the univariate forecasts but also aggregate consistently with the hierarchical or group structure.
+
+As a final step in the modelling, published data from Regional and National GDP figures were used to adjust the forecast results to coincide with official public statistics.  This used the same methodology of `iterative proportional fitting' (otherwise known as `raking') used to create the original MTAGDP series, which makes the series internally consistent and matches published values for the `between years'.
+
+% subsection data_treatment (end)
+
+\subsection{Preliminary results \& Validation}  % (fold)
+	\label{sub:preliminary_results}
+Predictions from the MTAGDP series show increased GDP across all Territorial Authorities (Figure 1).  For a number of Territorial Authorities in the vicinity of major urban centres (i.e. Wellington, Christhchuch, Dunedin), trends in GDP for the final two years (i.e. 2013, 2014) show relatively smaller increases compared to the major centres.
+
+	\begin{figure}[H]
+	\caption{Forecasts of MTAGDP across regions (dotted lines show predictions).}
+	\label{fig:mtagdp_forecasts}
+	\includegraphics[width=\textwidth]{../figures/mtagdp_forecasts.png}
+	\end{figure}
+
+In order to cross-validate the MTAGDP estimates from the grouped time-series forecast and raking procedure, GDP data were summed at the Regional Council and National levels to compare with published values from Statistics New Zealand.  Although the grouped time series forecasting was done independently of the Regional and National totals, the raking provided an empirical means to adjust the figures to match the marginal totals from the published values.    In order to validate that the `between years' estimates (i.e. 2013, 2014) did not deviate from the published values, a diagnostic plot of the two series (i.e. `published' vs. `gts raking') was created (Figure 2).
+
+	\begin{figure}[htb]
+	\caption{Comparisons between aggregated MTAGDP data for Regional Councils and National totals with published values from Statistics New Zealand.}
+	\label{fig:compared_with_published}
+	\includegraphics[width=\textwidth]{../figures/compare_with_published.png}
+	\end{figure}
+
+% subsection preliminary_results (end)
+
+    \section{Summary}
+Preliminary results and diagnostics of the MTAGDP forecasting approach indicate that this methodology is able to provide estimates for the `between years' that are consistent with values published by Statistics New Zealand.  Although the industry level information was used in the creation of the forecasts, MBIE's intent is to publicly release only the Territorial Authority totals from this analysis.  This will create a similar level of information (i.e. an aggregated value for `between years') currently available at the Regional Council level.  One benefit of this approach is that it uses all of the information created in the MTAGDP series with few assumptions so the results are intuitive to interpret.  The use of raking in the final stages is consistent with the methodology used in creating MTAGDP, and provides users with estimates that can be aggregated to match published figures.
+
+As these values are preliminary, we are seeking feedback on the overall approach and intend to publish the extended series (i.e. with estimates for 2013 and 2014) at the end of 2015 as part of the MTAGDP data product.
+
+%This marks the end of the document
+\end{document}		
+

@@ -152,7 +152,7 @@ shinyServer(function(input, output, session) {
     tmp <- paste0("<h3>nominal GDP ", 
            input$DateRange[1],
            " to ",
-           input$DateRange[2],
+           max(totals_data()$Year),
            " ($m) </h3>")
     if(input$GrowthValue != "Total GDP"){
       tmp <- paste0(tmp, "<b>", input$Ind1,  "</b>")  

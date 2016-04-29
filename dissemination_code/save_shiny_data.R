@@ -8,6 +8,7 @@
 ##
 ##    Date:       2015-05-14
 ##
+##    Modified December 2015 to add the two forecast total years
 
 ##
 ## ===============Facts====================
@@ -63,13 +64,18 @@ AllNZTotals <- tagdp_shiny %>%
 tagdp_shiny <- rbind(tagdp_shiny, AllNZTotals)
 
 #-------------------
-  TheTotals <- tagdp_shiny %>%
-               filter(Type == "RGDP") %>%
-               group_by(Year, TA) %>%
-               summarise(GDP = sum(GDP),
-                         GDP_real = sum(GDP_real)) %>% 
-               ungroup() 
+  AllNZTotals2 <- mtagdp_totals %>%
+    group_by(Year) %>%
+    summarise(GDP = sum(GDP), GDP_real = sum(GDP_real)) %>%
+    mutate(TA = "All New Zealand")
 
+  TheTotals <- mtagdp_totals %>%
+    group_by(Year, TA) %>%
+    summarise(GDP = sum(GDP), 
+              GDP_real = sum(GDP_real)) %>%
+    rbind(AllNZTotals2) %>%
+    arrange(Year, TA) %>%
+    ungroup()
 ##
 ## =====================Dimensions=================
 ##

@@ -36,6 +36,9 @@
 ##
 ## 1. Set up data objects and the survey object for initial stages of raking on employees & earnings
 ##
+   # test from old BDS
+     BDS <- BDS %>% filter(Year < 2014)
+
    # create earnings object from BDS data
      EarningsDetailed <- BDS
 
@@ -43,7 +46,7 @@
      EarningsDetailed_svy <- svydesign(~1, data=EarningsDetailed, weights = ~Employees)
 
 #----------------Weight up to LEED total earnings--------------------
-
+                                        
 # We use the rake function, designed to bring up survey weights to meet marginal population totals,
 # to convert the number of employees to add up to the marginal totals of total earnings for the 3 LEED tables.
 # In the command below, epsilon is the maximum acceptable change in a total before convergence is declared.
@@ -185,7 +188,7 @@
     # collate the final result of the raking as GDP
       TAGDP$GDP <- weights(TAGDP_svy) 
 
-    # create a copy for further modifcations with population & inflation-adjustment information
+    # create a copy for further modifications with population & inflation-adjustment information
       TAGDP_grunt <- TAGDP
      
       rm(TAGDP) # to prevent it being used later and causing confusion
@@ -196,7 +199,5 @@
      
      TAGDP_grunt$TA_short <- gsub(" District", "", TAGDP_grunt$TA)
      TAGDP_grunt$TA_short <- gsub(" City", "",     TAGDP_grunt$TA_short)
-     
-     
-     
+   
   

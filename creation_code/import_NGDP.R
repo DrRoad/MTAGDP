@@ -15,18 +15,14 @@
 
 ##
 ##  Extract the data from MBIE's database framework
-##
-	
-         ngdp <- ImportTS2(TRED, "SNE - Series, GDP(P), Nominal, Actual, ANZSIC06 detailed industry groups (Annual-Mar)")
-         ngdp <- subset(ngdp, CV1 == "Gross Domestic Product - production measure")[ ,c("TimePeriod", "CV2", "Value")]
-
-         names(ngdp) <- c("Year", "NGDP_industry", "NGDP")
-         ngdp$Year   <- as.numeric(substring(ngdp$Year, 1, 4))
-
-         ngdp <- subset(ngdp, NGDP_industry != "Total All Industries")
-         ngdp <- subset(ngdp, NGDP_industry != "Finance Service Charge") # is always 0, and sometimes NA so best to cut
-
-        
+##	
+   # Import NGDP & groom
+     ngdp <- ImportTS2(TRED, "SNE - Series, GDP(P), Nominal, Actual, ANZSIC06 detailed industry groups (Annual-Mar)",
+                            where = "CV1 = 'Gross Domestic Product - production measure' and TimePeriod > '1999-12-31'") %>%
+                      select(Year = TimePeriod, NGDP_industry = CV2, NGDP = Value) %>%
+                      mutate(Year = year(Year)) %>%
+                      filter(!NGDP_industry %in% c('Total All Industries', 'Finance Service Charge'))
+                            
    ##
    ##    Carve out only the years within RGDP, and rename measure variable
    ##
@@ -39,20 +35,36 @@
    ##       industry for this work
    ##
 
-         GST_Duties_Tax <- ImportTS2(TRED, "SNE - Series, GDP(P), Nominal, Actual, Total (Annual-Mar)")
-         GST_Duties_Tax <- GST_Duties_Tax[GST_Duties_Tax$CV1 %in% c("GST", "Import duties", "Other Taxes on Production"),]
+      GST_Duties_Tax <- ImportTS2(TRED, "SNE - Series, GDP(P), Nominal, Actual, Total (Annual-Mar)",
+                                         where = "TimePeriod > '1999-12-31'") %>%
+                                  filter(CV1 %in% c("GST", "Import duties", "Other Taxes on Production")) %>%
+                                  mutate(Year = year(TimePeriod)) %>%
+                                  group_by(Year) %>%
+                                  summarise(Freq = sum(Value, na.rm = TRUE)) %>%
+                                  ungroup() %>%
+                                  mutate(NGDP_industry = "GST on Production, Import Duties and Other Taxes") %>%
+                                  filter(Year %in% unique(rgdp_pop_pub$Year))
+           
+   ##
+   ##  Combine the GDP values with GST into a single object
+   ##
+       ngdp_pop <- bind_rows(ngdp_pop, GST_Duties_Tax)
+ 
 
-         GST_Duties_Tax <- with(GST_Duties_Tax,
-                           aggregate(list(Freq = Value),
-                                     list(Year = year(TimePeriod)),
-                                     sum, 
-                                     na.rm = TRUE)
-                                   )
-         GST_Duties_Tax$NGDP_industry <- "GST on Production, Import Duties and Other Taxes"                       
-         GST_Duties_Tax               <- subset(GST_Duties_Tax, Year %in% unique(rgdp_pop_pub$Year))
+         #GST_Duties_Tax <- GST_Duties_Tax[GST_Duties_Tax$CV1 %in% c("GST", "Import duties", "Other Taxes on Production"),]
+
+         #GST_Duties_Tax <- with(GST_Duties_Tax,
+          #                 aggregate(list(Freq = Value),
+          #                           list(Year = year(TimePeriod)),
+          #                           sum, 
+          #                           na.rm = TRUE)
+          #                         )
+#          GST_Duties_Tax$NGDP_industry <- "GST on Production, Import Duties and Other Taxes"                       
+#          GST_Duties_Tax               <- subset(GST_Duties_Tax, Year %in% unique(rgdp_pop_pub$Year))
 
   ##
   ##  Combine the GDP values with GST into a single object
   ##
-      ngdp_pop <- plyr::rbind.fill(ngdp_pop, GST_Duties_Tax)
+      # ngdp_pop <- plyr::rbind.fill(ngdp_pop, GST_Duties_Tax)
+
 

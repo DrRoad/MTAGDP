@@ -100,8 +100,9 @@
 ## 2. Identify the ith largest commuting shift.  We do the first four predominate places people commute to.
 ##     After 4 the percentages are down to < 2%, and some source TAs have no fifth destination eg Stratford.
 ##
+maxIt <- 4 ## The reason for select 4 is above.
         
-       for(i in 1:4){
+       for(i in 1:maxIt){
          commuting_edglist_ith_biggest <- commuting_edgelist2 %>%
            summarise(to = Target[i],
                      commuting_correction = Proportion[i]) %>% # ie the proportin of original earnings to give away
@@ -157,7 +158,7 @@
            combined <- left_join(originals, bonuses) %>%
                        mutate(bonus = ifelse(is.na(bonus), 0, bonus)) %>%
                        mutate(bonus_ratio = bonus / Earnings,
-                       bonus_ratio = ifelse(Earnings == 0, 0, bonus_ratio)) %>%
+                              bonus_ratio = ifelse(Earnings == 0, 0, bonus_ratio)) %>%
                        select(-Earnings)
         
            TAGDP.c <- TAGDP.c %>%

@@ -19,15 +19,14 @@
 ##-----1. Download the public version from TRED, with 2014 industries (the most consistent classification)-------------
 ##
 
-# # Import data
-rgdp_pop_pub <- ImportTS2(TRED, "Gross domestic product, by region and industry (Annual-Mar)", 
+  # Import data
+    rgdp_pop_pub <- ImportTS2(TRED, "Gross domestic product, by region and industry (Annual-Mar)", 
                          stringsAsFactors = FALSE) %>%
-  rename(RegionGDP = CV2,
-         RGDP_industry = CV3,
-         Freq = Value) %>%
-  mutate(Year = as.numeric(substring(TimePeriod , 1, 4))) %>%
-  select(Year, RegionGDP, RGDP_industry, Freq)
-
+                    rename(RegionGDP     = CV2,
+                           RGDP_industry = CV3,
+                           Freq          = Value) %>%
+                    mutate(Year = as.numeric(substring(TimePeriod , 1, 4))) %>%
+                    select(Year, RegionGDP, RGDP_industry, Freq)
 
 ##
 ##  2. Remove the totals
@@ -37,24 +36,27 @@ rgdp_pop_pub <- ImportTS2(TRED, "Gross domestic product, by region and industry 
 # eg remove Primary and Other Manufacturing and just use 'manufacturing', which is present for all Regions.  
 # The more fine grained distinction will come in at the stage of raking to rgdp_pop_custom, which has more fine grained
 
-rgdp_pop_pub <- rgdp_pop_pub %>% 
+     rgdp_pop_pub <- rgdp_pop_pub %>% 
                 group_by(Year, RegionGDP) %>%
                 mutate(Freq = ifelse(RGDP_industry == "Professional, Scientific, Technical, Administrative and Support Services",
                                 Freq[RGDP_industry == "Professional, Scientific and Support Services"] +
                                 Freq[RGDP_industry == "Administrative and Support Services"],
                                 Freq)
-  ) %>%
-  filter(!RGDP_industry %in% c("Gross Domestic Product", 
-                                "Total All Industries",
-                                "Forestry, Fishing, and Mining",
-                                "Electricity, Gas, Water and Waste Services",
-                                "Primary Manufacturing",
-                                "Other Manufacturing",
-                                "Professional, Scientific and Support Services",
-                                "Administrative and Support Services",
-                                "Electricity, Gas, Water, and Waste services"),
-         !RegionGDP %in% c("New Zealand", "Total North Island", "Total South Island"),
-         !is.na(Freq))
+    ) %>%
+      filter(!RGDP_industry %in% c("Gross Domestic Product", 
+                                   "Total All Industries",
+                                   "Forestry, Fishing, and Mining",
+                                   "Electricity, Gas, Water and Waste Services",
+                                   "Primary Manufacturing",
+                                   "Other Manufacturing",
+                                   "Professional, Scientific and Support Services",
+                                   "Administrative and Support Services",
+                                   "Electricity, Gas, Water, and Waste services"),
+             !RegionGDP %in% c("New Zealand", "Total North Island", "Total South Island"),
+             !is.na(Freq))
+
+# save a copy for the forecasting
+  # save(rgdp_pop_pub, file="data_intermediate/rgdp_pop_pub.rda")         
 
 #----------------Public version - with the best industry classification available--------------
 
@@ -71,7 +73,7 @@ rgdp_pop_pub <- rgdp_pop_pub %>%
     rgdp_pop_pub_det <- ImportTS2(TRED, "Gross domestic product, by region and industry (Annual-Mar)", 
                              stringsAsFactors = FALSE) %>%
            rename(RegionGDP  = CV2,
-                        ind  = CV3,              # short name for this column as we need to use it lots
+                        ind  = CV3,   # short name for this column as we need to use it lots
                         Freq = Value) %>%
            mutate(Year = as.numeric(substring(TimePeriod , 1, 4))) %>%
            select(Year, RegionGDP, ind, Freq) %>%
@@ -115,25 +117,54 @@ rgdp_pop_pub <- rgdp_pop_pub %>%
 ## 3.----------------Import the custom data----------------------------------
 ##
 
-rgdp_custom_orig <- readWorksheetFromFile("data_raw\\MBIE_CONFIDENTIAL_RegionalGDP_matrix30industries_15regions_2000_2012.xlsx", 
-                      sheet = c('Backdated RGDP for MBIE in thou'),
-                      startRow = 1,
-                      check.names=FALSE) %>%
-  gather(Region, GDP, -Year, -Industry) %>%
-  # clean up:
-  mutate(GDP      = gsub(",", "", GDP),
-         GDP      = as.numeric(GDP) / 1000,
-         Region   = gsub("  region", "", Region),
-         Region   = gsub(" region", "", Region),
-         Industry = gsub("Import duties", "IMP", Industry),
-         Industry = gsub("Import", "IMP", Industry),
-         Industry = gsub("Import duties", "IMP", Industry),
-         Industry = gsub("IMP", "GST", Industry)) %>%
-  # give names consistent with concordances
-  rename(RGDPRef_custom = Industry,
-         RegionGDP      = Region,
-         Freq           = GDP) %>%
-  # knock out the totals
-  filter(!RGDPRef_custom  %in% c("TOT", "Total GDP")) %>%
-  group_by(Year, RGDPRef_custom, RegionGDP) %>%
-  summarise(Freq = sum(Freq))
+    rgdp_file        <- "data_raw/MBIE-Regional-GDP-industry-breakdowns-2000_2006-and-2007_2013.xlsx"
+    rgdp_custom_orig <- read.xlsx(rgdp_file, 
+                           sheet = c("2007_13"),
+                           startRow    = 1,
+                           check.names = FALSE) %>%
+                  rbind(read.xlsx(rgdp_file,
+                           sheet       = c("2000_06"),
+                           startRow    = 1,
+                           check.names = FALSE)) %>%                      
+                  gather(Region, GDP, -Year, -Industry.code) %>%
+                # clean up:
+                  mutate(GDP       = as.numeric(GDP),
+                         Region    = gsub(".region", "", Region),
+                         Region    = gsub("\\.", " ", Region)) %>%
+                # give names consistent with concordances
+                  rename(RGDPRef_custom = Industry.code,
+                         RegionGDP      = Region,
+                         Freq           = GDP) %>%
+                # knock out the totals
+                  dplyr::filter(!RGDPRef_custom  %in% c("B01")) %>%  
+                  dplyr::group_by(Year, RGDPRef_custom, RegionGDP) %>%
+                  dplyr::summarise(Freq = sum(Freq))
+
+
+ ## ---------------------------------------------------------------------- ##
+ ##                  from previous custom cut of rGDP                      ## 
+ ## ---------------------------------------------------------------------- ##
+
+# rgdp_custom_orig <- readWorksheetFromFile("data_raw\\MBIE_CONFIDENTIAL_RegionalGDP_matrix30industries_15regions_2000_2012.xlsx", 
+                      # sheet = c('Backdated RGDP for MBIE in thou'),
+                      # startRow = 1,
+                      # check.names=FALSE) %>%
+  # gather(Region, GDP, -Year, -Industry) %>%
+  # # clean up:
+  # mutate(GDP      = gsub(",", "", GDP),
+         # GDP      = as.numeric(GDP) / 1000,
+         # Region   = gsub("  region", "", Region),
+         # Region   = gsub(" region", "", Region),
+         # Industry = gsub("Import duties", "IMP", Industry),
+         # Industry = gsub("Import", "IMP", Industry),
+         # Industry = gsub("Import duties", "IMP", Industry),
+         # Industry = gsub("IMP", "GST", Industry)) %>%
+  # # give names consistent with concordances
+  # rename(RGDPRef_custom = Industry,
+         # RegionGDP      = Region,
+         # Freq           = GDP) %>%
+  # # knock out the totals
+  # filter(!RGDPRef_custom  %in% c("TOT", "Total GDP")) %>%
+  # group_by(Year, RGDPRef_custom, RegionGDP) %>%
+  # summarise(Freq = sum(Freq))                      
+                      

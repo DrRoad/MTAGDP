@@ -17,10 +17,29 @@
 ##    Date:       2015-05-21
 ##
 
+##  
+##    Notes:      1. There appears to be 'confidentialised' cells in the new BDS import from Stats NZ,
+##                   so may need to impute missing values (raking) to higher-level totals (e.g. Region) [FS 2016-04-05]
+##
+
    ##
    ##    Data comes from Detailed industry by region-ANZSIC06 2000 to 2012.  All dimensions are selected
    ##       except only the employee count values, not enterprise counts
-   ##
+
+ ## ----------------------------------------------------------------------- ##
+ ##     commented out until the 'confidential' cells can be dealt with      ##
+ ## ----------------------------------------------------------------------- ##
+    # bds <- ImportTS2(TRED, Dataset = 'Geographic units by region and industry 2000-14', stringsAsFactors=FALSE,
+                           # where   = "Unit = 'Employee Count' and TimePeriod > '1999-12-31'")
+
+    # BDS <- bds %>%
+           # filter(TimePeriod < "2014-01-31") %>%
+           # rename(ANZSIC06 = CV1, Area = CV2)
+                   
+ ## ---------------------------------------------------------------------- ##
+ ##                        using last year's BDS                           ##
+ ## ---------------------------------------------------------------------- ##
+
       BDS.1 <- read.csv("data_raw/TABLECODE7601_Data_c51b48ec-65bb-4ece-880a-fa575544cf03.csv",
                       stringsAsFactors = FALSE)
 
@@ -28,7 +47,7 @@
                       stringsAsFactors = FALSE)                
 
       BDS <- rbind(BDS.2, BDS.1)
-
+           
    ##
    ##    LEED data are aggregations of specific ANZISC 3 digit industries.  This section makes
    ##       industry codes which will be used later to map to LEED.
@@ -59,21 +78,38 @@
             c("J580", "J570", "J591", "J592"),
             c("K621", "K623"), 
             c("L662", "L663"),
-            c("O754", "O760", "O771", "O772"),
+            c("O754", "O760", "O771", "O772"),  ## includes "Government Representation"
             c("P821", "P822"))
-            
-      BDS <- subset(BDS, ANZSIC06 %in% Level3Industries)
-
-      BDS$LEEDCode <-factor(substring(BDS$ANZSIC06, 1, 4))
-
+      
+    # filter by L3 industries & create LEEDCode
+      BDS <- BDS %>%
+             filter( ANZSIC06 %in% Level3Industries ) %>%
+             mutate( LEEDCode = factor( substring( ANZSIC06, 1, 4) ) )
+     
       for (i in 1:length(MustMerge)){
         BDS$LEEDCode <- rename.levels(BDS$LEEDCode, 
                                        orig = MustMerge[[i]], 
-                                       new=rep(paste0(MustMerge[[i]], collapse=""), length(MustMerge[[i]])))
+                                       new=rep( paste0( MustMerge[[i]], collapse="" ), 
+                                                length( MustMerge[[i]] )
+                                                )
+                                      )
         }
 
-      BDS <- merge(BDS, industries, by="LEEDCode", all.x=TRUE)
+      
+      # we don't need ANZSIC06 any more, so aggregate up to the industries we need
 
+        BDS <- BDS %>%
+               # mutate(Year = year(Year)) %>%
+               dplyr::group_by(Year, LEEDCode, Area) %>%
+               dplyr::summarise(Value = sum(Value)) %>%
+               left_join(unique(industries[, c("LEED4Industry",         ## only use the necessary columns
+                                               "LEED18Industry",
+                                               "RGDPIndustry_custom",
+                                               "RGDPIndustry_2015",
+                                               "RGDP_industry",
+                                               "NGDP_industry",
+                                               "LEEDCode")]))     
+               
       if(length(unique(subset(BDS, is.na(LEED4Industry))$LEEDCode)) > 0){
         stop("Some BDS industries failed to concord to the LEED level")
       }
@@ -82,41 +118,40 @@
    ##    Splitting the regional data into lower level TA areas needs
    ##       the Region => TA concordance applied to the regional data
    ##
-      BDS <- subset(BDS, Area %in% unique(leedTA_to_SNZTA$SNZ_TA))
+      #BDS <- subset(BDS, Area %in% unique(leedTA_to_SNZTA$SNZ_TA) )
+      BDS <- BDS %>%
+        filter( Area %in% unique(leedTA_to_SNZTA$SNZ_TA) )
 
-      # do a cross join with the lower level TA
-      tmp <- merge(BDS, 
-                   TA_to_multiple_regions, 
-                   by.x  = "Area", 
-                   by.y  = "SNZ_TA", 
-                   all.x = TRUE, 
-                   all.y = TRUE)
-                   
-      tmp$Value <- with(tmp, Value * Proportion)
-
+      # do a cross join with the lower level TA 
+      tmp <- BDS %>%
+             full_join(TA_to_multiple_regions,
+             by = c('Area'='SNZ_TA')
+             ) %>%
+        mutate( Value = Value * Proportion )
+      ##
+     
       ##
       ##    Check some totals - everything still balancing?
       ##
 
          BDS_TA_Totals <- with(BDS,
                             aggregate(list(Value = Value),
-                                      list(Area = Area),
+                                      list(Area  = Area),
                                       sum, 
                                       na.rm = TRUE)
                                       )
          tmp_TA_Totals <- with(tmp,
                             aggregate(list(Value = Value),
-                                      list(Area = Area),
+                                      list(Area  = Area),
                                       sum, 
                                       na.rm = TRUE)
                                       )
 
          check <- merge(BDS_TA_Totals,
                         tmp_TA_Totals,
-                        by = c("Area"),
+                        by  = c("Area"),
                         all = TRUE)
          check$Difference <- with(check, (Value.x - Value.y))
-
 
          if(sum(check$Difference) != 0){
            stop("Something went wrong in allocating employees to the broken down sub-TAs")
@@ -130,7 +165,7 @@
    ##
    ##    Add on the LEED18 region variable
    ##
-      unique(BDS$Region) %in% unique(regions_concs$Region)
+      ( unique(BDS$Region) %in% unique(regions_concs$Region) )
       BDS <- left_join(BDS, regions_concs) %>%
              rename(TA = Area)
 
@@ -142,12 +177,12 @@
         mutate(
           i = ifelse(RGDPIndustry_2015 %in% c("Forestry, Fishing, and Mining", 
                                               "Electricity, Gas, Water, and Waste services") &
-                       RegionGDP %in% c("Marlborough", "West Coast"),
-                     "Forestry, Fishing, Mining, Electricity, Gas, Water and Waste Services",
+                     RegionGDP %in% c("Marlborough", "West Coast"),
+                                      "Forestry, Fishing, Mining, Electricity, Gas, Water and Waste Services",
                      RGDPIndustry_2015),
           i = ifelse(i %in% c("Other Manufacturing", "Primary Manufacturing") &
                        RegionGDP %in% c("Northland", "Southland"),
-                     "Manufacturing",
+                                        "Manufacturing",
                      i),
           RegionIndustryRGDP15 = ifelse(i %in% 
                                                c("Agriculture", 
@@ -165,6 +200,7 @@
                                                  "Public Administration and Safety",
                                                  "Education and Training",
                                                  "Health Care and Social Assistance",
+                                                 "Health Care and Social Assistance",
                                                  "GST on Production, Import Duties and Other Taxes"),
                                              i, 
                                              paste(RegionGDP, i)))  %>%
@@ -176,6 +212,6 @@
                         LEED4Industry, LEED18Industry, RGDPIndustry_custom, NGDP_industry, RegionIndustryRGDP15, RGDP_industry,
                         TA, TA_Region_modified, Region, LEED18Region, RegionGDP) %>%
                summarise(Employees = sum(Value)) %>%
+               filter(LEED18Industry != "Not elsewhere included") %>%
                data.frame()
-               
-               
+     

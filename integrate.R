@@ -42,7 +42,7 @@
 ##                  are also conducted in the project workflow.
 ##
 ##
-##   Authors:       Peter Ellis, James Hogan, Franz Smith, Sector Performance, Ministry of Business, Innovation &  
+##   Authors:       Peter Ellis, Franz Smith, Sector Performance, Ministry of Business, Innovation &  
 ##                  Employment
 ##
 ##   Date:          2014-08-10 to 2015-06-20
@@ -74,22 +74,26 @@
       library(XLConnect)
       library(reshape2)
       library(RColorBrewer)
-      library(riverplot)
+      library(riverplot)   ## used in the creation of the sankeys
       library(Hmisc)
-      library(qgraph)
+      library(qgraph)      ## used for creating the commuter diagram
       library(igraph)
       library(shinyapps)
       library(mbiemaps)
       library(riverplot)
       library(tm)
       library(wordcloud)
+      library(xtable)
+      library(openxlsx)
       
 
       # Proxy password to get through MBIE firewall.  Placed here so you can run all of integrate.r without it stopping 
       # and asking for your password when it gets to the deploy app stage.
       if(!exists("creds") & Sys.getenv("USERDNSDOMAIN") == "WD.GOVT.NZ"){
         creds <- AskCreds(Title = "User Log In Name and Password", startuid = "", returnValOnCancel = "ID_CANCEL")   
-        options(RCurlOptions = list(XXX))
+        options(RCurlOptions = list(proxy = 'http://proxybcw.wd.govt.nz:8080',
+                                    proxyusername = creds$uid, 
+                                    proxypassword = creds$pwd))
       }
       
     # call to additional functions    
@@ -115,7 +119,7 @@
    ##
    ##  Read in concordances needed to connect the different data sources
    ##
-      source("creation_code/import_concordances.R")
+       source("creation_code/import_concordances.R")
       
      # calculate commuting corrections from 2013 Census data for .csv called in grunt
        source("creation_code/create_commuting_corrections.R")
@@ -130,13 +134,14 @@
    ##
    ##  Import Business Demography Statistics (N.B. takes a while to import)
    ##
-      source("creation_code/import_BDS.R")
-
+       source("creation_code/import_BDS.R")
+      # source("exploratory_analysis_code/incorporate_newLEEDtables.R")  ## test on using new LEED tables to
+                                                                         #  replace BDS with 'confidential' cells
    ##
    ##  Read in the LEED data.  
    ##  
-      InYears <- unique(BDS$Year)
-      InYears <- InYears[order(InYears)]
+      InYears <- sort( unique(BDS$Year) )
+      #InYears <- InYears[order(InYears)]
 
       source("creation_code/import_leed4.R")
       source("creation_code/import_leed18.R")
@@ -169,7 +174,9 @@
 
    ## Reshape, merge with deflators and population totals for per capita, etc
         source("creation_code/modify_tagdp.R")
-   
+
+   ## Save versions of TAGDP for forecasting & public dissemination
+        source("creation_code/save_tagdp.R")   
    
 ##
 ## --------------- 4. Perform trouble-shooting & testing of results------------------------
@@ -207,20 +214,36 @@
       source("dissemination_code/plot_industries_by_TA.R")
       source("dissemination_code/plot_industries_by_region.R")
 
-
       source("dissemination_code/plot_commuting_patterns.r")
-
    
-   ##
-   ## Prepare data and deploy Shinyapp
-   ## 
-      source("dissemination_code/prepare_basic_TA_commentary.R")
-      source("dissemination_code/save_shiny_data.R")
-      source("dissemination_code/deploy_shinyapp.R") # deploys "mtagdp_test" by default; edit the script if you also 
-                                                # want to deploy "mtagdp"
+  
+##
+## ----------- 6. Forecast MTAGDP for 'between year' totals ----------------------
+##
+   # performs the grouped time series forecasts for 'between years' (at the moment, 2013-2014)
+     source("forecast_mtagdp/forecast_mtagdp.R")
+      
+   # rake the values to match published Regional GDP marginal totals   
+     source("forecast_mtagdp/rake_mtagdp_forecasts.R")
+      
+   # perform checks and visual inspections of output   
+     source("forecast_mtagdp/validate_mtagdp_forecasts.R")
+      
+   # prepare & save data file for public release
+     source("forecast_mtagdp/create_forecast_release.R")
+
 
 ##
-## ----------------- 6. Conduct exploratory analyses and map visuals----------------------
+## Prepare data and deploy Shinyapp
+## 
+   source("dissemination_code/prepare_basic_TA_commentary.R")
+   source("dissemination_code/save_shiny_data.R")
+   source("dissemination_code/deploy_shinyapp.R") # deploys "mtagdp_test" by default; edit the script if you also 
+#   want to deploy "mtagdp"
+
+
+##
+## ----------------- 7. Conduct exploratory analyses and map visuals----------------------
 ##
 
    # create TAGDP map visuals for national view of industries & cagr stats for regional clusters
@@ -233,36 +256,36 @@
      source("exploratory_analysis_code/what_is_going_on_in_Buller.R")
 
 
-  # A dot plot summarise economic growth
-    source("exploratory_analysis_code/dotplot_orderedRibbon.R")
+   # A dot plot summarise economic growth
+     source("exploratory_analysis_code/dotplot_orderedRibbon.R")
    
 
 ##
-##  7. Creation of reports & supporting documentation
+##  8. Creation of reports & supporting documentation
 ##
 
     # create figures for the summary & methodology reports
      source("knitr/create_figures.R")
 
-     # set directory for knitr
-       setwd(paste0(project_dir, "/knitr"))
+    # set directory for knitr
+      setwd(paste0(project_dir, "/knitr"))
         
-     # document describing the methodology & technical details
-       knit2pdf("methodology.Rnw", compiler = 'xelatex', quiet=FALSE) ## doesn't compile
+    # document describing the methodology & technical details
+      knit2pdf("methodology.Rnw", compiler = 'xelatex', quiet=FALSE) ## doesn't compile
 
-     # summary document describing the output data & results
-       knit2pdf("summary.Rnw", compiler = 'xelatex', quiet=FALSE, clean = FALSE)  
+    # summary document describing the output data & results
+      knit2pdf("summary.Rnw", compiler = 'xelatex', quiet=FALSE, clean = FALSE)  
                                                                    
-     # some FAQs to accompany the data & website
-       knit2pdf("tagdp_faqs.rnw", compiler = 'xelatex', quiet=FALSE)  
+    # some FAQs to accompany the data & website
+      knit2pdf("tagdp_faqs.rnw", compiler = 'xelatex', quiet=FALSE)  
         
-   #   Getting back to the project directory     
-        setwd(project_dir)
+    # Getting back to the project directory     
+      setwd(project_dir)
 
 
-   #   Make a public copy of the source material.  Assumes existence on the f: drive of the necessary folders etc (created once-off by hand)
+    # Make a public copy of the source material.  Assumes existence on the f: drive of the necessary folders etc (created once-off by hand)
       source("dissemination_code/create_public_repo_snapshot.R")
 
-   #   meta analysis of this repository - how many lines of code etc
+    # meta analysis of this repository - how many lines of code etc
       source("exploratory_analysis_code/meta_analysis.R")
         

@@ -1,0 +1,76 @@
+SNZ_TA,Region,Proportion,TA_Region_modified,ta_simpl_gg,region_cluster,Cluster,tamod,ta_trunc
+Far North District,Northland,1,Far North District,Far North,Northland,Northland,Far North District,Far.
+Whangarei District,Northland,1,Whangarei District,Whangarei,Northland,Northland,Whangarei District,Whan
+Kaipara District,Northland,1,Kaipara District,Kaipara,Northland,Northland,Kaipara District,Kaip
+Auckland,Auckland,1,Auckland,Auckland,Auckland,Auckland,Auckland,Auck
+Thames-Coromandel District,Waikato,1,Thames-Coromandel District,Thames-Coromandel,Waikato,Waikato,Thames-Coromandel District,Tham
+Hauraki District,Waikato,1,Hauraki District,Hauraki,Waikato,Waikato,Hauraki District,Haur
+Waikato District,Waikato,1,Waikato District,Waikato,Waikato,Waikato,aika District,aika
+Matamata-Piako District,Waikato,1,Matamata-Piako District,Matamata-Piako,Waikato,Waikato,Matamata-Piako District,Mata
+Hamilton City,Waikato,1,Hamilton City,Hamilton City,Waikato,Waikato,Hamilton City,Hami
+Waipa District,Waikato,1,Waipa District,Waipa,Waikato,Waikato,Waipa District,Waip
+South Waikato District,Waikato,1,South Waikato District,South Waikato,Waikato,Waikato,Saika District,Saik
+Otorohanga District,Waikato,1,Otorohanga District,Otorohanga,Waikato,Waikato,Otorohanga District,Otor
+Waitomo District,Waikato,0.9487,Waitomo District 1,Waitomo,Waikato,Waikato,tomo District,tom1
+Waitomo District,Manawatu-Wanganui,0.0513,Waitomo District 2,Waitomo,Waikato,Waikato,tomo District,tom2
+Taupo District,Waikato,0.7374,Taupo District 1,Taupo,Waikato,Waikato,Taupo District,Tau1
+Taupo District,Bay of Plenty,0.1431,Taupo District 2,Taupo,Waikato,Waikato,Taupo District,Tau2
+Taupo District,Hawke's Bay,0.1126,Taupo District 3,Taupo,Waikato,Waikato,Taupo District,Tau3
+Taupo District,Manawatu-Wanganui,0.0069,Taupo District 4,Taupo,Waikato,Waikato,Taupo District,Tau4
+Western Bay of Plenty District,Bay of Plenty,1,Western Bay of Plenty District,Western Bay of Plenty,Bay of Plenty,Bay of Plenty,WBay of Plenty District,WBay
+Tauranga City,Bay of Plenty,1,Tauranga City,Tauranga City,Bay of Plenty,Bay of Plenty,Tauranga City,Taur
+Opotiki District,Bay of Plenty,1,Opotiki District,Opotiki,Bay of Plenty,Bay of Plenty,Opotiki District,Opot
+Whakatane District,Bay of Plenty,1,Whakatane District,Whakatane,Bay of Plenty,Bay of Plenty,Whakatane District,Whak
+Rotorua District,Bay of Plenty,0.6152,Rotorua District 1,Rotorua,Bay of Plenty,Bay of Plenty,Rotorua District,Rot1
+Rotorua District,Waikato,0.3848,Rotorua District 2,Rotorua,Bay of Plenty,Bay of Plenty,Rotorua District,Rot2
+Kawerau District,Bay of Plenty,1,Kawerau District,Kawerau,Bay of Plenty,Bay of Plenty,Kawerau District,Kawe
+Gisborne District,Gisborne,1,Gisborne District,Gisborne,Gisborne,Gisborne-Hawke.s.Bay,Gisborne District,Gisb
+Wairoa District,Hawke's Bay,1,Wairoa District,Wairoa,Hawke's Bay,Gisborne-Hawke.s.Bay,Wairoa District,Wair
+Hastings District,Hawke's Bay,1,Hastings District,Hastings,Hawke's Bay,Gisborne-Hawke.s.Bay,Hastings District,Hast
+Napier City,Hawke's Bay,1,Napier City,Napier City,Hawke's Bay,Gisborne-Hawke.s.Bay,Napier City,Napi
+Central Hawke's Bay District,Hawke's Bay,1,Central Hawke's Bay District,Central Hawke's Bay,Hawke's Bay,Gisborne-Hawke.s.Bay,CHawke's Bay District,CHaw
+New Plymouth District,Taranaki,1,New Plymouth District,New Plymouth,Taranaki,Taranaki,New Plymouth District,New.
+Stratford District,Taranaki,0.6813,Stratford District 1,Stratford,Taranaki,Taranaki,Stratford District,Str1
+Stratford District,Manawatu-Wanganui,0.3187,Stratford District 2,Stratford,Taranaki,Taranaki,Stratford District,Str2
+South Taranaki District,Taranaki,1,South Taranaki District,South Taranaki,Taranaki,Taranaki,STaranaki District,STar
+Ruapehu District,Manawatu-Wanganui,1,Ruapehu District,Ruapehu,Manawatu-Wanganui,Manawatu-Wanganui,Ruapehu District,Ruap
+Rangitikei District,Manawatu-Wanganui,0.8637,Rangitikei District 1,Rangitikei,Manawatu-Wanganui,Manawatu-Wanganui,Rangitikei District,Ran1
+Rangitikei District,Hawke's Bay,0.1363,Rangitikei District 2,Rangitikei,Manawatu-Wanganui,Manawatu-Wanganui,Rangitikei District,Ran2
+Wanganui District,Manawatu-Wanganui,1,Wanganui District,Wanganui,Manawatu-Wanganui,Manawatu-Wanganui,Wanganui District,Wang
+Manawatu District,Manawatu-Wanganui,1,Manawatu District,Manawatu,Manawatu-Wanganui,Manawatu-Wanganui,Manawatu District,Mana
+Palmerston North City,Manawatu-Wanganui,1,Palmerston North City,Palmerston North City,Manawatu-Wanganui,Manawatu-Wanganui,Palmerston North City,Palm
+Tararua District,Manawatu-Wanganui,0.9842,Tararua District 1,Tararua,Manawatu-Wanganui,Manawatu-Wanganui,Tararua District,Tar1
+Tararua District,Wellington,0.0158,Tararua District 2,Tararua,Manawatu-Wanganui,Manawatu-Wanganui,Tararua District,Tar2
+Horowhenua District,Manawatu-Wanganui,1,Horowhenua District,Horowhenua,Manawatu-Wanganui,Manawatu-Wanganui,Horowhenua District,Horo
+Masterton District,Wellington,1,Masterton District,Masterton,Wellington,Wellington,Masterton District,Mast
+Kapiti Coast District,Wellington,1,Kapiti Coast District,Kapiti Coast,Wellington,Wellington,Kapiti Coast District,Kapi
+Carterton District,Wellington,1,Carterton District,Carterton,Wellington,Wellington,Carterton District,Cart
+South Wairarapa District,Wellington,1,South Wairarapa District,South Wairarapa,Wellington,Wellington,SWairarapa District,SWai
+Upper Hutt City,Wellington,1,Upper Hutt City,Upper Hutt City,Wellington,Wellington,Upper Hutt City,Uppe
+Porirua City,Wellington,1,Porirua City,Porirua City,Wellington,Wellington,Porirua City,Pori
+Lower Hutt City,Wellington,1,Hutt City,Lower Hutt City,Wellington,Wellington,Lower Hutt City,Lowe
+Wellington City,Wellington,1,Wellington City,Wellington City,Wellington,Wellington,Wellington City,Well
+Tasman District,Tasman,1,Tasman District,Tasman,Tasman,Marlborough.Nelson.Tasman,Tasman District,Tasm
+Nelson City,Nelson,1,Nelson City,Nelson City,Nelson,Marlborough.Nelson.Tasman,Nelson City,Nels
+Marlborough District,Marlborough,1,Marlborough District,Marlborough,Marlborough,Marlborough.Nelson.Tasman,Marlborough District,Marl
+Buller District,West Coast,1,Buller District,Buller,West Coast,West Coast,Buller District,Bull
+Grey District,West Coast,1,Grey District,Grey,West Coast,West Coast,Grey District,Grey
+Westland District,West Coast,1,Westland District,Westland,West Coast,West Coast,Westland District,West
+Kaikoura District,Canterbury,1,Kaikoura District,Kaikoura,Canterbury,Canterbury,Kaikoura District,Kaik
+Hurunui District,Canterbury,1,Hurunui District,Hurunui,Canterbury,Canterbury,Hurunui District,Huru
+Selwyn District,Canterbury,1,Selwyn District,Selwyn,Canterbury,Canterbury,Selwyn District,Selw
+Waimakariri District,Canterbury,1,Waimakariri District,Waimakariri,Canterbury,Canterbury,makariri District,maka
+Christchurch City,Canterbury,1,Christchurch City,Christchurch City,Canterbury,Canterbury,Christchurch City,Chri
+Ashburton District,Canterbury,1,Ashburton District,Ashburton,Canterbury,Canterbury,Ashburton District,Ashb
+Mackenzie District,Canterbury,1,Mackenzie District,Mackenzie,Canterbury,Canterbury,Mackenzie District,Mack
+Timaru District,Canterbury,1,Timaru District,Timaru,Canterbury,Canterbury,Timaru District,Tima
+Waimate District,Canterbury,1,Waimate District,Waimate,Canterbury,Canterbury,mate District,mate
+Waitaki District,Canterbury,0.5961,Waitaki District 1,Waitaki,Otago,Otago,Waitaki District,Wai1
+Waitaki District,Otago,0.4039,Waitaki District 2,Waitaki,Otago,Otago,Waitaki District,Wai2
+Queenstown-Lakes District,Otago,1,Queenstown-Lakes District,Queenstown-Lakes,Otago,Otago,Queenstown-Lakes District,Quee
+Central Otago District,Otago,1,Central Otago District,Central Otago,Otago,Otago,COtago District,COta
+Dunedin City,Otago,1,Dunedin City,Dunedin City,Otago,Otago,Dunedin City,Dune
+Clutha District,Otago,1,Clutha District,Clutha,Otago,Otago,Clutha District,Clut
+Southland District,Southland,1,Southland District,Southland,Southland,Southland,Southland District,Sout
+Gore District,Southland,1,Gore District,Gore,Southland,Southland,Gore District,Gore
+Invercargill City,Southland,1,Invercargill City,Invercargill City,Southland,Southland,Invercargill City,Inve

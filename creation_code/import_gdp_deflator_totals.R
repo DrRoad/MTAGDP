@@ -32,21 +32,20 @@
                      # filter(!deflatorIndustry %in% c("Total All Industries")) %>%
                      filter(Year > 1999)
                      
-   chain    <- ImportTS2(TRED,  "SNE - Series, GDP(P), Chain volume, Actual, ANZSIC06 industry groups (Annual-Mar)",
+   chain    <- ImportTS2(TRED,  "Series, GDP(P), Chain volume, Actual, ANZSIC06 industry groups (Annual-Mar)",
                                  stringsAsFactors = FALSE) %>%
                       filter(CV1 == "Gross Domestic Product - production measure") %>%
                       mutate(Year = as.numeric(substring(TimePeriod, 1, 4))) %>%
                       rename(deflatorIndustry = CV2) %>%
                       select(Year, deflatorIndustry, Value) %>%
                       filter(!deflatorIndustry %in% c("Unallocated")) %>%
-                      filter(Year > 1999)
-                      # filter(Year < 2013) %>%    ## save this just in case we want to explore relative to current values
+                      filter(Year > 1999)    ## save this just in case we want to explore relative to current values
 ##
 ## 2. Create industry-level deflators aby comparing the published nominal and chain volume GDP by industry (national)
 ##                     
  
-  deflators <- left_join(subset(chain, Year < 2013), subset(nominal, Year < 2013), by = c("Year", "deflatorIndustry")) %>%
-                     mutate(ind.deflator = (Value.x / Value.y) / (Value.x[Year == 2012] / Value.y[Year == 2012])) %>%
+  deflators <- left_join(subset(chain, Year < 2014), subset(nominal, Year < 2014), by = c("Year", "deflatorIndustry")) %>%
+                     mutate(ind.deflator = (Value.x / Value.y) / (Value.x[Year == 2013] / Value.y[Year == 2013])) %>%
                      
                      # we need somehow to deflate the GST; we use the Total All Industries to do this
                      mutate(deflatorIndustry = gsub(
