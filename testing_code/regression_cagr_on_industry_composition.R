@@ -27,6 +27,8 @@ library(extrafont)
 ###########################################################################
 ## anaysis 1
 ## Import data: regional GDP by industry
+## cagr_00_to_12 is renamed as "cagr_analysisPeriod
+## rgdp_cagr_00_to_12 is renamed as "rgdp_cagr_analysisPeriod"
 rgdp <- 
   ImportTS2(TRED, "Gross domestic product, by region and industry (Annual-Mar)") %>%
   mutate(Year = year(TimePeriod)) %>%
@@ -49,24 +51,25 @@ rgdp_industry_share <-
   mutate(GDP_industry_share = GDP/Totat_GDP*100)
 
 ## CAGR
-rgdp_cagr_00_to_12 <-
+rgdp_cagr_analysisPeriod <-
   rgdp %>%
-  filter(Year %in% c(2000,2012)) %>%
+  #filter(Year %in% c(2000,2012)) %>%
+  filter(Year %in% c(startYear,endYear)) %>%
   spread(Year, Value) %>%
   ## cagr 00 to 12
-  mutate(cagr_00_to_12 = CAGR(.$"2012"/.$"2000", 2012-2000))
-
+  #mutate(cagr_analysisPeriod = CAGR(.$"2012"/.$"2000", 2012-2000))
+  mutate(cagr_analysisPeriod = CAGR(.$as.character(endYear)/.$as.character(startYear), endYear-startYear))
 ## join cagr and industry share
-rgdp_cagr_00_to_12_share00 <-
-  rgdp_cagr_00_to_12 %>% filter(Industry != "Gross Domestic Product") %>% 
-  select(Area, Industry, cagr_00_to_12) %>%
-  left_join(rgdp_industry_share %>% filter(Year == 2000) %>% select(Area, Industry, gpd_share00 = GDP_industry_share),
+rgdp_cagr_analysisPeriod_share00 <-
+  rgdp_cagr_analysisPeriod %>% filter(Industry != "Gross Domestic Product") %>% 
+  select(Area, Industry, cagr_analysisPeriod) %>%
+  left_join(rgdp_industry_share %>% filter(Year == startYear) %>% select(Area, Industry, gpd_share00 = GDP_industry_share),
             by = c("Area" = "Area", "Industry" = "Industry")) %>%
-  filter(!is.na(cagr_00_to_12), !is.na(gpd_share00))
+  filter(!is.na(cagr_analysisPeriod), !is.na(gpd_share00))
 
 ##################################################
 ## 1. attempt to regression
-fit <- lm(cagr_00_to_12~gpd_share00, data = rgdp_cagr_00_to_12_share00)
+fit <- lm(cagr_analysisPeriod~gpd_share00, data = rgdp_cagr_analysisPeriod_share00)
 
 (sum_fit <- summary(fit))
 a <- round(coef(sum_fit)[1,1],3)
@@ -74,12 +77,13 @@ b <- round(coef(sum_fit)[2,1],4)
 
 fit_eqn <- function(x){a+b*x}
 
-g1 <- ggplot(rgdp_cagr_00_to_12_share00, aes(x=gpd_share00, y=cagr_00_to_12)) +
+g1 <- ggplot(rgdp_cagr_analysisPeriod_share00, aes(x=gpd_share00, y=cagr_analysisPeriod)) +
   geom_point(aes(colour=Area),size = 3 ) +
   stat_function(fun = fit_eqn, color = tourism.cols(5)) +
   ggtitle("") +
   xlab("GDP industry share") +
-  ylab("GDP growth (CAGR 2000-2012)") +
+  #ylab("GDP growth (CAGR 2000-2012)") +
+  ylab(cat("GDP growth (CAGR ", startYear,"-",endYear,")") +
   guides(colour=guide_legend(nrow=4,byrow=TRUE)) +
   theme(legend.position="bottom")
 print(g1)
@@ -89,12 +93,13 @@ print(g1)
 dev.off()
 
 
-g2 <- ggplot(rgdp_cagr_00_to_12_share00, aes(x=gpd_share00, y=cagr_00_to_12)) +
+g2 <- ggplot(rgdp_cagr_analysisPeriod_share00, aes(x=gpd_share00, y=cagr_analysisPeriod)) +
   geom_point(aes(colour=Industry),size = 3 ) +
   stat_function(fun = fit_eqn, color = tourism.cols(5)) +
   ggtitle("") +
   xlab("GDP industry share") +
-  ylab("GDP growth (CAGR 2000-2012)") +
+  #ylab("GDP growth (CAGR 2000-2012)") +
+  ylab(cat("GDP growth (CAGR ", startYear,"-",endYear,")") +
   guides(colour=guide_legend(ncol=3,byrow=TRUE)) +
   theme(legend.position="bottom")
 print(g2)
@@ -104,27 +109,28 @@ print(g2)
 dev.off()
 
 
-dtf <- rgdp_cagr_00_to_12_share00 %>%
+dtf <- rgdp_cagr_analysisPeriod_share00 %>%
   filter(Industry != "Total All Industries") %>%
   filter(Area != "New Zealand") %>%
   group_by(Area) %>%
-  mutate(cor_by_area = round(cor(gpd_share00, cagr_00_to_12), 2)) %>%
+  mutate(cor_by_area = round(cor(gpd_share00, cagr_analysisPeriod), 2)) %>%
   group_by(Industry) %>%
-  mutate(cor_by_industry = round(cor(gpd_share00, cagr_00_to_12), 2)) %>%
+  mutate(cor_by_industry = round(cor(gpd_share00, cagr_analysisPeriod), 2)) %>%
   ungroup %>%
-  mutate(cor_all = round(cor(gpd_share00, cagr_00_to_12), 2))
+  mutate(cor_all = round(cor(gpd_share00, cagr_analysisPeriod), 2))
 
 
 g3 <- 
   dtf %>% 
   mutate(Area = wrap(paste0(Area," (",cor_by_area,")"), 50)) %>%
-  ggplot(aes(x=gpd_share00, y=cagr_00_to_12)) + 
+  ggplot(aes(x=gpd_share00, y=cagr_analysisPeriod)) + 
   geom_point() + 
   geom_smooth(method = "lm") + 
   facet_wrap(~ Area, ncol = 4, scales = "free") +
   ggtitle("") +
   xlab("GDP industry share") +
-  ylab("GDP growth (CAGR 2000-2012)")
+  #ylab("GDP growth (CAGR 2000-2012)")
+  ylab(cat("GDP growth (CAGR ", startYear,"-",endYear,")") 
 print(g3)
 
 CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_regions.corr.pdf", 7, 7)
@@ -135,13 +141,14 @@ dev.off()
 
 g4 <- 
   dtf %>% mutate(Industry = wrap(paste0(Industry," (",cor_by_industry,")"), 50)) %>%
-  ggplot(aes(x=gpd_share00, y=cagr_00_to_12)) + 
+  ggplot(aes(x=gpd_share00, y=cagr_analysisPeriod)) + 
   geom_point() + 
   geom_smooth(method = "lm") + 
   facet_wrap(~ Industry, ncol = 4, scales = "free") +
   ggtitle("") +
   xlab("GDP industry share") +
-  ylab("GDP growth (CAGR 2000-2012)")
+  #ylab("GDP growth (CAGR 2000-2012)")
+  ylab(cat("GDP growth (CAGR ", startYear,"-",endYear,")") 
 print(g4)
 
 CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_industries.corr.pdf", 7, 7)
@@ -151,12 +158,13 @@ dev.off()
 
 g5 <- 
   dtf %>%
-  ggplot(aes(x=gpd_share00, y=cagr_00_to_12)) + 
+  ggplot(aes(x=gpd_share00, y=cagr_analysisPeriod)) + 
   geom_point() + 
   geom_smooth(method = "lm") + 
   ggtitle(paste0("correlation = ", unique(dtf$cor_all))) +
   xlab("GDP industry share") +
-  ylab("GDP growth (CAGR 2000-2012)")
+  #ylab("GDP growth (CAGR 2000-2012)")
+  ylab(cat("GDP growth (CAGR ", startYear,"-",endYear,")") 
 print(g5)
 
 CairoPDF("testing_outputs/regressionAnalysis/cagr_by_industryShare_overall.corr.pdf", 7, 7)
@@ -202,17 +210,20 @@ GDP_TA_raw_total <-
 GDP_cagr_00_to_12 <-
   GDP_TA_raw_total %>%
 #   bind_rows(GDP_RC_raw_total) %>%   #if we contain RC level as well.
-  filter(Year %in% c(2000,2012)) %>%
+  #filter(Year %in% c(2000,2012)) %>%
+  filter(Year %in% c(startYear, endYear))
   spread(Year, Value) %>%
   ## cagr 00 to 12
-  mutate(cagr_00_to_12 = CAGR(.$"2012"/.$"2000", 2012-2000))%>% 
-  select(Area, cagr_00_to_12)
+  #mutate(cagr_analysisPeriod = CAGR(.$"2012"/.$"2000", 2012-2000))%>% 
+  mutate(cagr_analysisPeriod = CAGR(.$as.character(endYear)/.$as.character(startYear), endYear-startYear))%>% 
+  select(Area, cagr_analysisPeriod)
 
 ## GDP share by industry 2000
 GDP_industry_share00 <- 
   GDP_TA_raw_by_Industry %>%
 #   bind_rows(GDP_RC_raw_by_Industry) %>%   #if we contain RC level as well.
-  filter(Year %in% c(2000)) %>%
+  #filter(Year %in% c(2000)) %>%
+  filter(Year %in% c(startYear)) %>%
   group_by(Year, Area) %>%
   mutate(GDP_industry_share00 = Value/sum(Value)*100) %>%
   ungroup %>%
@@ -221,17 +232,17 @@ GDP_industry_share00 <-
 
 ## fit a model with Agriculture and Manufacturing only
 fit <- 
-  lm(cagr_00_to_12~., 
+  lm(cagr_analysisPeriod~., 
      data = GDP_cagr_00_to_12 %>% 
        left_join(GDP_industry_share00, by = c("Area" = "Area")) %>%
-       select(one_of(c("cagr_00_to_12", "Agriculture", "Manufacturing")))
+       select(one_of(c("cagr_analysisPeriod", "Agriculture", "Manufacturing")))
   )
 (sum_fit <- summary(fit))
 
 ## fit a model with all industries
 fit <- 
-  lm(cagr_00_to_12~., 
-     data = GDP_cagr_00_to_12 %>% 
+  lm(cagr_analysisPeriod~., 
+     data = GDP_cagr_analysisPeriod %>% 
        left_join(GDP_industry_share00, by = c("Area" = "Area")) %>%
        select(-Area)
   )
@@ -253,7 +264,7 @@ par(op)
 
 
 ## suspicious outlier
-GDP_cagr_00_to_12 %>% 
+GDP_cagr_analysisPeriod %>% 
   left_join(GDP_industry_share00, by = c("Area" = "Area")) %>%
   add_rownames %>% 
   select(rowname, Area) %>%
@@ -264,7 +275,7 @@ op <- par(mfrow=c(2,2))
 plot(fit.best, id.n = 66)
 par(op)
 
-GDP_cagr_00_to_12 %>% 
+GDP_cagr_analysisPeriod %>% 
   left_join(GDP_industry_share00, by = c("Area" = "Area")) %>%
   add_rownames %>% 
   select(rowname, Area)
@@ -273,7 +284,7 @@ GDP_cagr_00_to_12 %>%
 confint(fit.best, level = 0.95)
 
 ## confident interval for best fitted model
-  GDP_cagr_00_to_12 %>% 
+  GDP_cagr_analysisPeriod %>% 
   left_join(GDP_industry_share00, by = c("Area" = "Area")) %>%
   add_rownames %>% 
   select(rowname, Area, Manufacturing, one_of("Public Administration and Safety")) %>%

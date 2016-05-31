@@ -23,9 +23,10 @@
 
 #------------For Regions-------------
 # Total by Region from the public figures
-     tmp <- rgdp_pop_pub %>%
-            group_by(Year, RegionGDP, RGDP_industry) %>%
-            summarise(Freq = sum(Freq))
+#     tmp <- rgdp_pop_pub %>%
+#             group_by(Year, RegionGDP, RGDP_industry) %>%
+#             summarise(Freq = sum(Freq))
+     tmp <- rgdp_pop_pub
 
      tmp_conc <- unique(industries[ , c("RGDP_industry", "RGDPRef_custom")])
 
@@ -34,7 +35,7 @@
 
   # combine that with the total by region from the custom data and calculate differences
      reg_holes <- rgdp_custom_mod  %>%
-                  group_by(Year, RegionGDP, RGDP_industry) %>%
+                  group_by(Year, RGDP_Region, RGDP_industry) %>%
                   summarise(Custom = sum(Freq, na.rm = TRUE)) %>%
                   left_join(tmp) %>%
                   mutate(Missing = Freq - Custom) 
@@ -117,14 +118,14 @@
                    rename(Freq = Missing)
 
       reg_holes <- reg_holes %>%
-                   select(Year, RegionGDP, RGDP_industry, Missing) %>%
+                   select(Year, RGDP_Region, RGDP_industry, Missing) %>%
                    rename(Freq = Missing)
 
 ##
 ## 4. -----------Restrict the population objects to just those with missing values-----------
 ##
      the_missing_dims <- unique(rgdp_custom_mod[!complete.cases(rgdp_custom_mod), 
-                                            c("Year", "RegionGDP", "RGDPRef_custom", "RGDP_industry")])
+                                            c("Year", "RGDP_Region", "RGDPRef_custom", "RGDP_industry")])
 
      ind_holes <- ind_holes %>%
                   right_join(the_missing_dims[ , c("Year", "RGDPRef_custom")]) %>%
@@ -132,7 +133,7 @@
                   mutate(Freq = ifelse(Freq < 1, 1, Freq))
 
      reg_holes <- reg_holes %>%
-                  right_join(the_missing_dims[ , c("Year", "RegionGDP", "RGDP_industry")]) %>%
+                  right_join(the_missing_dims[ , c("Year", "RGDP_Region", "RGDP_industry")]) %>%
                   unique()
 
 ##
@@ -140,12 +141,12 @@
 ##
      missing_fill <- rgdp_custom_mod[!complete.cases(rgdp_custom_mod), ] %>%
                      mutate(Freq = 1) %>%
-                     arrange(RegionGDP)
+                     arrange(RGDP_Region)
 
      missing_fill_svy <- svydesign(~1, data = missing_fill, weights = ~Freq)
 
      missing_fill_svy <- rake(missing_fill_svy, 
-                         sample.margins = list (~Year + RegionGDP + RGDP_industry, 
+                         sample.margins = list (~Year + RGDP_Region + RGDP_industry, 
                                                 ~Year + RGDPRef_custom),
                          population.margins = list(reg_holes, 
                                                    ind_holes),
@@ -176,7 +177,7 @@
 
      rgdp_pop_custom_svy <- svydesign(~1, weights = ~Freq, data = rgdp_pop_custom)
      rgdp_pop_custom_svy <- rake(rgdp_pop_custom_svy,
-                            sample.margins = list(~Year + RegionGDP + RGDP_industry),
+                            sample.margins = list(~Year + RGDP_Region + RGDP_industry),
                             population.margins = list(rgdp_pop_pub))
 
      rgdp_pop_custom$Freq <- weights(rgdp_pop_custom_svy)

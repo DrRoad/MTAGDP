@@ -46,8 +46,9 @@
 ##                  Employment
 ##
 ##   Date:          2014-08-10 to 2015-06-20
-##
-
+##   Peer-Reviewed by: Senay Yasar Saglam
+##   Review Period: 2016-05-16 to 2016-05-23
+##   
 ##
 ## --------- 1. Clear the decks, and initialise the R environment for running the job----------------
 ##
@@ -68,6 +69,8 @@
       library(lubridate)
       library(dplyr)
       library(tidyr)
+      library(readr)
+      library(magrittr)
       library(RODBC)
       library(sqldf)
       library(stringr)
@@ -85,7 +88,7 @@
       library(wordcloud)
       library(xtable)
       library(openxlsx)
-      
+      library(tcltk) # Used for creating a dialog box for entering time period for analysis 
 
       # Proxy password to get through MBIE firewall.  Placed here so you can run all of integrate.r without it stopping 
       # and asking for your password when it gets to the deploy app stage.
@@ -96,7 +99,21 @@
                                     proxypassword = creds$pwd))
       }
       
-    # call to additional functions    
+      
+      ## Get the information on which time period user wants to analyze
+      source("creation_code/getAnalysisYears.R")
+
+      userInput <-  getTimePeriod(vars=c('startYear', 'endYear'), 
+                            labels=c('Enter the start year for the analysis after 1999 (inclusive): ', 'Enter the end year for the analysis (inclusive): '),
+                            fun=c(checkStart, checkEnd))
+
+      startYear <- userInput$startYear
+      endYear   <- userInput$endYear
+      deflationYear <- endYear
+      forecastYear <- endYear+2
+
+    # call to additional functions  & themes
+        source("R/themes.r")    
         source("R/organise_geographies.R")
         source("R/organise_industries.R")
 
@@ -137,11 +154,12 @@
        source("creation_code/import_BDS.R")
       # source("exploratory_analysis_code/incorporate_newLEEDtables.R")  ## test on using new LEED tables to
                                                                          #  replace BDS with 'confidential' cells
-   ##
-   ##  Read in the LEED data.  
-   ##  
-      InYears <- sort( unique(BDS$Year) )
-      #InYears <- InYears[order(InYears)]
+      
+      #InYears <- sort( unique(BDS$Year) )      
+      InYears <- startYear:endYear
+
+
+##  Read in the LEED data.  
 
       source("creation_code/import_leed4.R")
       source("creation_code/import_leed18.R")
@@ -157,6 +175,8 @@
    ##      Align the RGDP measures to the National GDP measures.
    ##  
       source("creation_code/import_RGDP.R")
+      
+      
       source("creation_code/import_NGDP.R")
 
       # we need the NGDP and RGDP totals to match before we do the imputation...
@@ -181,6 +201,13 @@
 ##
 ## --------------- 4. Perform trouble-shooting & testing of results------------------------
 ##
+      ## Color code breakdown for the plots
+
+    if((endYear-startYear)%%2==0){
+        breakYears <- seq(from=startYear, to=endYear, by=2)
+        }else{
+      breakYears <- c(seq(from=startYear, to=(endYear-1), by=2 ),endYear)
+      }
 
       # Comparison of original populations for incompatibilities
       # This script prints stuff to the screen.  The thing to look at is the "DiffPercent" column,

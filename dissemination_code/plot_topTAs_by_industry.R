@@ -41,10 +41,11 @@
          tmp <- subset(tmp, TA %in% biggest)
   
          print(
-           ggplot(tmp, aes(y=TA, x=GDP, colour = as.numeric(Year))) +
+           ggplot(tmp, aes(y=TA, x=GDP, colour = as.integer(Year))) +
            geom_point() +
            scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                  breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                  #breaks = seq(from = startYear, to =endYear, length.out =4)
+                                  breaks = breakYears) +
            scale_x_continuous("\nContribution to GDP ($m)", label=dollar) +
            labs(y="") +
            ggtitle(paste(allindustries[i], "\nTop 20 Territorial Authorities"))

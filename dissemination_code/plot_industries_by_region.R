@@ -42,7 +42,9 @@
            ggplot(tmp, aes(y=NGDP_industry, x=GDP, colour=as.numeric(Year))) +
              geom_point() +
              scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                  breaks = seq(from = 2000, to = 2012, length.out = 4)) +
+                                  #breaks = seq(from = 2000, to = 2012, length.out = 4)
+                                  breaks = breakYears
+                                  ) +
              scale_x_continuous("\nContribution to GDP ($m)", label = dollar) +
              labs(y = "") +
              ggtitle(paste(allRegions[i], "- top 20 industries"))

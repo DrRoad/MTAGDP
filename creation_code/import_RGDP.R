@@ -22,13 +22,28 @@
   # Import data
     rgdp_pop_pub <- ImportTS2(TRED, "Gross domestic product, by region and industry (Annual-Mar)", 
                          stringsAsFactors = FALSE) %>%
-                    rename(RegionGDP     = CV2,
+                    rename(RGDP_Region     = CV2,
                            RGDP_industry = CV3,
                            Freq          = Value) %>%
-                    mutate(Year = as.numeric(substring(TimePeriod , 1, 4))) %>%
-                    select(Year, RegionGDP, RGDP_industry, Freq)
+						        #mutate(Year = as.numeric(substring(TimePeriod , 1, 4))) %>%
+                    mutate(Year = year(TimePeriod)) %>%
+                    select(Year, RGDP_Region, RGDP_industry, Freq) 
 
-##
+    rgdp_pop_pub <- rgdp_pop_pub %>%
+                    dplyr::filter(Year %in% InYears)
+
+## ================== Checking whether we have data for the time period user wants
+
+    RGDPYears <- unique(rgdp_pop_pub$Year)
+    DiffYears <- setdiff(InYears, RGDPYears)
+    if(length(DiffYears) > 0){
+      cat("The analysis cannot be performed. The data for the specified time period is not available in the RGDP Public data. The missing years are: ")
+      cat(DiffYears,sep="\n")
+      stop("The analysis is stopped")
+    } else{
+      rm(RGDPYears, DiffYears)
+    }
+
 ##  2. Remove the totals
 ##
 
@@ -37,7 +52,7 @@
 # The more fine grained distinction will come in at the stage of raking to rgdp_pop_custom, which has more fine grained
 
      rgdp_pop_pub <- rgdp_pop_pub %>% 
-                group_by(Year, RegionGDP) %>%
+                group_by(Year, RGDP_Region) %>%
                 mutate(Freq = ifelse(RGDP_industry == "Professional, Scientific, Technical, Administrative and Support Services",
                                 Freq[RGDP_industry == "Professional, Scientific and Support Services"] +
                                 Freq[RGDP_industry == "Administrative and Support Services"],
@@ -52,7 +67,7 @@
                                    "Professional, Scientific and Support Services",
                                    "Administrative and Support Services",
                                    "Electricity, Gas, Water, and Waste services"),
-             !RegionGDP %in% c("New Zealand", "Total North Island", "Total South Island"),
+             !RGDP_Region %in% c("New Zealand", "Total North Island", "Total South Island"),
              !is.na(Freq))
 
 # save a copy for the forecasting
@@ -72,19 +87,19 @@
 
     rgdp_pop_pub_det <- ImportTS2(TRED, "Gross domestic product, by region and industry (Annual-Mar)", 
                              stringsAsFactors = FALSE) %>%
-           rename(RegionGDP  = CV2,
+           rename(RGDP_Region  = CV2,
                         ind  = CV3,   # short name for this column as we need to use it lots
                         Freq = Value) %>%
-           mutate(Year = as.numeric(substring(TimePeriod , 1, 4))) %>%
-           select(Year, RegionGDP, ind, Freq) %>%
-           filter(!RegionGDP %in% c("New Zealand", "Total North Island", "Total South Island")) %>%
+           mutate(Year = year(TimePeriod)) %>%
+           select(Year, RGDP_Region, ind, Freq) %>%
+           filter(!RGDP_Region %in% c("New Zealand", "Total North Island", "Total South Island")) %>%
   
            # No 'Manufacturing' please unless Northland or Southland:
-           filter(!(ind == "Manufacturing" & ! (RegionGDP %in% c("Northland", "Southland")))) %>%
+           filter(!(ind == "Manufacturing" & ! (RGDP_Region %in% c("Northland", "Southland")))) %>%
   
            # No 'FFMEGWWS' unless West Coast or Marlborough:
            filter(!(ind == "Forestry, Fishing, Mining, Electricity, Gas, Water and Waste Services" &
-                      !(RegionGDP %in% c("West Coast", "Marlborough")))) %>%
+                      !(RGDP_Region %in% c("West Coast", "Marlborough")))) %>%
            mutate(RegionIndustryRGDP15 = ifelse(ind %in% 
                                                   c("Agriculture", 
                                                     "Construction",
@@ -103,15 +118,33 @@
                                                     "Health Care and Social Assistance",
                                                     "GST on Production, Import Duties and Other Taxes"),
                                                 ind, 
-                                                paste(RegionGDP, ind))) %>% 
-           group_by(Year, RegionGDP) %>%
+                                                paste(RGDP_Region, ind))) %>% 
+           group_by(Year, RGDP_Region) %>%
            filter(!(ind %in% c("Gross Domestic Product", "Total All Industries"))) %>%
            filter(!is.na(Freq)) %>%
            select(-ind)
+           
+ 
+        rgdp_pop_pub_det <- rgdp_pop_pub_det %>%
+                            dplyr::filter(Year %in% InYears)
+  ##
 
-              if(sum(rgdp_pop_pub_det$Freq) - sum(rgdp_pop_pub$Freq) > 0.0001 * sum(rgdp_pop_pub_det$Freq)){
-                 stop("The two RGDP public population figures are too different.")
-               }
+      ## Checking the time period user specified
+      RGDP_det_Years <- unique(rgdp_pop_pub_det$Year)
+      DiffYears <- setdiff(InYears, RGDP_det_Years)
+
+      if(length(DiffYears) > 0){
+          cat("The analysis cannot be performed. The data for the specified time period is not available in the RGDP table. The missing years are: ")
+          cat(DiffYears,sep="\n")
+          stop("The analysis is stopped")
+        } else{
+          rm(DiffYears, RGDP_det_Years)
+        }
+
+
+        if(sum(rgdp_pop_pub_det$Freq) - sum(rgdp_pop_pub$Freq) > 0.0001 * sum(rgdp_pop_pub_det$Freq)){
+           stop("The RGDP public population figures based on industry classifications before and after 2015 are too different .")
+        }
 
 ##
 ## 3.----------------Import the custom data----------------------------------
@@ -133,13 +166,33 @@
                          Region    = gsub("\\.", " ", Region)) %>%
                 # give names consistent with concordances
                   rename(RGDPRef_custom = Industry.code,
-                         RegionGDP      = Region,
+                         RGDP_Region    = Region,
                          Freq           = GDP) %>%
                 # knock out the totals
                   dplyr::filter(!RGDPRef_custom  %in% c("B01")) %>%  
-                  dplyr::group_by(Year, RGDPRef_custom, RegionGDP) %>%
+                  dplyr::group_by(Year, RGDPRef_custom, RGDP_Region) %>%
                   dplyr::summarise(Freq = sum(Freq))
 
+  rgdp_custom_orig <- rgdp_custom_orig %>%
+                      filter(Year %in% InYears)
+
+  RGDP_custom_orig_Years <- unique(rgdp_custom_orig$Year)
+  DiffYears_RGDP_custom_orig<- setdiff(InYears, RGDP_custom_orig_Years)
+
+  if(length(DiffYears_RGDP_custom_orig) > 0){
+    cat("The analysis cannot be performed. The data for the specified time period is not available in the RGDP custom data. The missing years are: ")
+    cat(DiffYears_RGDP_custom_orig,sep="\n")
+    stop("The analysis is stopped")
+  } else {
+    rm(DiffYears_RGDP_custom_orig, RGDP_custom_orig_Years)
+  }
+
+  
+
+
+if(sum(rgdp_pop_pub_det$Freq) - sum(rgdp_pop_pub$Freq) > 0.0001 * sum(rgdp_pop_pub_det$Freq)){
+  stop("The RGDP public population figures based on industry classifications before and after 2015 are too different .")
+}
 
  ## ---------------------------------------------------------------------- ##
  ##                  from previous custom cut of rGDP                      ## 

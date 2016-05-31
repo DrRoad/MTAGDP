@@ -13,31 +13,40 @@
 ##                  
 ##    Date:       2014-08-10
 ##
-
+##   Peer-Reviewed by: Senay Yasar Saglam, Sector Performance, MBIE
+##   Review Period: 2016-05-16 to 2016-05-23
 ##
 ##    Notes:      1. Changed to import LEED tables from TRED [FS: 2016-04-04]
 ##                2. Need to fix the filter on the TimePeriod dates.  Does not filter based on string [FS]
+##                3. The data is quarterly.
 ##
 
    ##
    ##    Import the raw table from Statistics New Zealand
    ##
        leed37 <- ImportTS2(TRED, Dataset = 'Table 37: LEED measures, by territorial authority', stringsAsFactors=FALSE,
-                                 where   = "Unit = 'Total earnings'")
-                             
- ## ---------------------------------------------------------------------------------------- ##  
- ##   hard coded the selection for the YEMar                                                 ##
- ##   as.Date(paste0(seq(from = 2000, to = 2014),"-03-31")) embedded in filter not working   ##  [FS 2016-04-04]
- ## ---------------------------------------------------------------------------------------- ## 
-      # leed37raw <- leed37  ## just for testing
+                                 where   = "Unit = 'Total earnings'") %>%
+                  dplyr::mutate(Year = year(TimePeriod)) %>%
+                  dplyr::mutate(YEMar = ifelse(month(TimePeriod) == 3, Year, Year + 1)) %>%
+                  dplyr::rename(LEED_TA = CV1) %>%
+                  #dplyr::filter(YEMar > 1999)                 
+                  dplyr::filter(YEMar >= startYear)
+       
+    # data from tred looks like it is missing most recent data.  Take it from nzdotstat in the meanwhile
+      # leed37 <- read.csv("data_raw/TABLECODE7037_Data_e5992295-96ec-494b-a801-5d6bf7131077.csv",
+                                                                            # stringsAsFactors = FALSE) 
+      # names(leed37)[names(leed37) == "Territorial.authority"] <- "LEED_TA"
 
-       leed37 <- leed37 %>%
-                 dplyr::mutate(TimePeriod = as.character(TimePeriod)) %>%
-                 dplyr::filter(TimePeriod %in% c("2000-03-31","2001-03-31","2002-03-31","2003-03-31","2004-03-31",
-                                                 "2005-03-31","2006-03-31","2007-03-31","2008-03-31","2009-03-31",
-                                                 "2010-03-31","2011-03-31","2012-03-31","2013-03-31")) %>%
-                 dplyr::rename(LEED_TA = CV1)      
+   ##
+   ##    Aggregate to YE March
+   ##
+       # leed37$Year <- 2000 + as.numeric(substring(leed37$Quarter, 5, 6))
 
+      # fix the problems with the 1990s appearing as 2099 instead of 1999:
+        # leed37$Year <- with(leed37, ifelse(Year > 2080, Year - 100, Year))
+        # leed37$YEMar <- with(leed37, ifelse(substring(leed37$Quarter, 1, 3) == "Mar", Year, Year + 1))                 
+                 
+    
    ##
    ##    Prior to Quarter Dec-10, there are no values for "Auckland" so we need to create them.
    ##
@@ -52,7 +61,8 @@
    ##
       leed37 <- leed37 %>%
                 filter(LEED_TA != "Total territorial authority") %>%
-                dplyr::group_by(TimePeriod, LEED_TA) %>%
+                #dplyr::group_by(Year, LEED_TA) %>% ### Modified
+                group_by(YEMar, LEED_TA) %>% ### Modified
                 dplyr::summarise(TotalEarnings = sum(Value))
 
       if(length(unique(leed37$LEED_TA)) != 66)
@@ -70,22 +80,30 @@
    ##
    ##    Do a cross join with the lower level TA and make an object
    ##
-      tmp               <- merge(leed37, TA_to_multiple_regions, by = c("SNZ_TA"), all.x= TRUE, all.y=TRUE)
-      tmp$TotalEarnings <- with(tmp, TotalEarnings * Proportion)
-
-      if(sum(tmp$TotalEarnings) != sum(leed37$TotalEarnings))
-      {
-        stop("Something went wrong apportioning earnings to the sub-TAs (one region per sub-TA)")
-      }
-
-      leed37 <- tmp
-      rm(tmp)
+#       tmp               <- merge(leed37, TA_to_multiple_regions, by = c("SNZ_TA"), all.x= TRUE, all.y=TRUE)
+#       tmp$TotalEarnings <- with(tmp, TotalEarnings * Proportion)
+# 
+#       if(sum(tmp$TotalEarnings) != sum(leed37$TotalEarnings))
+#       {
+#         stop("Something went wrong apportioning earnings to the sub-TAs (one region per sub-TA)")
+#       }
+# 
+#       leed37 <- tmp
+#       rm(tmp)
+       
+       
+       ## Removed the check whether TotalEarnings stayed same once we bring in the TA_to_multiple_regions. 
+       ## If the sum of proportions for a given TA is equal to 1, then we do not need to make this check. 
+        
+       leed37 <- merge(leed37, TA_to_multiple_regions, by = c("SNZ_TA"), all.x= TRUE, all.y=TRUE)
+       leed37$TotalEarnings <- with(leed37, TotalEarnings*Proportion)
       
    ##
    ##    Summarise data
    ##
         leed37 <- leed37 %>%
-                  dplyr::group_by(TA_Region_modified, Region, SNZ_TA, TimePeriod) %>%
+                  #dplyr::group_by(TA_Region_modified, Region, SNZ_TA, Year) %>%
+                  dplyr::group_by(TA_Region_modified, Region, SNZ_TA, YEMar) %>%
                   dplyr::summarise(TotalEarnings = sum(TotalEarnings)) %>%
                   data.frame() 
                       
@@ -93,31 +111,24 @@
    ##    Get ready to use as population in raking a survey object
    ##
       leed37_pop <- leed37 %>%
-                    dplyr::mutate(Year = year(TimePeriod)) %>%
-                    dplyr::select(Year, TA_Region_modified, TotalEarnings) %>%
-                    dplyr::rename(Freq = TotalEarnings) %>%
-                    dplyr::filter(Year %in% InYears)
-
-
-## -------------------------------------------------------------------- ##
-##                     from previous import_leed37                      ##
-## -------------------------------------------------------------------- ##
-      
-   # leed37 <- read.csv("data_raw/TABLECODE7037_Data_2fbd4042-a117-470a-a484-5c38c1033011.csv",
-                      # stringsAsFactors = FALSE)
-   # names(leed37)[names(leed37) == "Territorial.authority"] <- "LEED_TA"
-
-   ##
-   ##    Aggregate to YE March
-   ##
-
-       # leed37$Year <- 2000 + as.numeric(substring(leed37$Quarter, 5, 6))
-
-      # fix the problems with the 1990s appearing as 2099 instead of 1999:
-        # leed37$Year <- with(leed37, ifelse(Year > 2080, Year - 100, Year))
-
-        # leed37$YEMar <- with(leed37, ifelse(substring(leed37$Quarter, 1, 3) == "Mar", Year, Year + 1))
-      # names(leed37_pop)[names(leed37_pop) == "TotalEarnings"] <- "Freq"
-      # names(leed37_pop)[names(leed37_pop) == "YEMar"] <- "Year"
-
-      
+                    #dplyr::mutate(Year = year(TimePeriod)) %>%
+                    dplyr::select(YEMar, TA_Region_modified, TotalEarnings) %>%
+                    dplyr::rename(Freq = TotalEarnings)    %>%
+                    dplyr::filter(YEMar %in% InYears) %>%
+                    #dplyr::filter(Year %in% InYears) %>%
+                    rename(Year = YEMar)
+       
+   # ============check whether we are missing any years ========================#
+       
+       Leed37Years <-  sort( unique(leed37_pop$Year) )
+       DiffYears <- setdiff(InYears, Leed37Years) # The returned value for setdiff changes by the order of the arguments
+       # DiffYears will specify the years that are required for the analysis but are not 
+       # missing from the Leed37 data.
+       
+       if(length(DiffYears) > 0){
+         cat("The analysis cannot be performed. The data for the specified time period is not available in the Leed37 table. The missing years are: ")
+         cat(DiffYears,sep="\n")
+         stop("The analysis is stopped")
+       } else {
+        rm(DiffYears, Leed37Years)
+       }

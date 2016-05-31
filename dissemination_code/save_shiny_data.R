@@ -66,12 +66,13 @@ tagdp_shiny <- rbind(tagdp_shiny, AllNZTotals)
 #-------------------
   AllNZTotals2 <- mtagdp_totals %>%
     group_by(Year) %>%
-    summarise(GDP = sum(GDP), GDP_real = sum(GDP_real)) %>%
+    summarise(GDP      = sum(GDP), 
+              GDP_real = sum(GDP_real)) %>%
     mutate(TA = "All New Zealand")
 
   TheTotals <- mtagdp_totals %>%
     group_by(Year, TA) %>%
-    summarise(GDP = sum(GDP), 
+    summarise(GDP      = sum(GDP), 
               GDP_real = sum(GDP_real)) %>%
     rbind(AllNZTotals2) %>%
     arrange(Year, TA) %>%
@@ -117,7 +118,7 @@ if(("mbiemaps" %in% installed.packages()[, "Package"])) {
   ta_cols <- data_frame(TA = c(TAs, "Black"), TA_short = c(TAs_short$TA, "Black"),
                         Col = c(sample(colorRampPalette(mbie.cols())(length(TAs))), "Black"))
 
-ta_cols[ta_cols$TA == "All New Zealand", "Col"] <- "Black"
+  ta_cols[ta_cols$TA == "All New Zealand", "Col"] <- "Black"
 
 ##
 ## =====================save===============

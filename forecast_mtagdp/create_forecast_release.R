@@ -27,9 +27,12 @@
     rolling_annuals <- ImportTS2(TRED, "Series, Rolling Annuals - IPDs, Actual, Total (Annual-Mar)") %>%
                          mutate(Year = year(TimePeriod)) %>%
                          filter(CV1  == "Gross Domestic Product - expenditure measure",
-                                Year %in% c(2012, 2013, 2014)) %>%
-                         mutate(deflator2012 = Value[Year == 2012] / Value) %>%              
-                         select(Year, deflator2012) %>%       
+                                #Year %in% c(2012, 2013, 2014, 2015)
+								Year %in% (endYear-1):forecastYear # 4 year period
+								) %>%
+                         #mutate(deflator2012 = Value[Year == 2012] / Value) %>%              
+                         mutate(deflatorEndYear = Value[Year == endYear] / Value) %>%              
+                         select(Year, deflatorEndYear) %>%       
                          data.frame()                     
         
 ##
@@ -44,11 +47,12 @@
                      data.frame()
                      
     forecast_real <- mtagdp_totals %>%
-                     filter(Year %in% c(2014, 2015)) %>%
+                     #filter(Year %in% c(2014, 2015)) %>%
+					 filter(Year %in% (forecastYear-1):forecastYear) %>%
                      left_join(rolling_annuals, by = c("Year")) %>%
                      group_by(Year, TA, Region, notes) %>%
                      summarise(GDP      = sum(GDP, na.rm=TRUE),
-                               GDP_real = sum(GDP, na.rm=TRUE) * deflator2012) %>%
+                               GDP_real = sum(GDP, na.rm=TRUE) * deflatorEndYear) %>%
                      data.frame()
 
 ##
@@ -61,10 +65,12 @@
                      select(Year, TA, Region, GDP, GDP_real, GDP_perCapita, GDP_real_perCapita, notes) %>%
                      data.frame()
                      
-       if(sum(mtagdp_totals$GDP[mtagdp_totals$Year < 2014]) != sum(TAGDP_defl$GDP)){
-          stop("mtagdp_totals has a different sum(GDP) to TAGDP_defl.  Not right.")
-        }                                                                           
-                     
+##       if(sum(mtagdp_totals$GDP[mtagdp_totals$Year < 2014]) != sum(TAGDP_defl$GDP)){
+##          stop("mtagdp_totals has a different sum(GDP) to TAGDP_defl.  Not right.")
+##        }                                                                           
+    if(sum(mtagdp_totals$GDP[mtagdp_totals$Year <= endYear]) != sum(TAGDP_defl$GDP)){
+		stop("mtagdp_totals has a different sum(GDP) to TAGDP_defl.  Not right.")
+	 } 	
 ##
 ## 4.  Save final MTAGDP object for exploratory data analyses & dump to .csv
 ##

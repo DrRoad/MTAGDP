@@ -65,7 +65,7 @@ shinyUI(fluidPage(
                                           inline = TRUE)
                               ),
             sliderInput("DateRange", "Specify a date range:", 
-              min = 2000, max = 2014, value = c(2000, 2014),
+              min = 2000, max = 2015, value = c(2000, 2015),
               sep = ""),
             conditionalPanel(condition = "input.GrowthPlotType != 'Show whole time series'",
                              checkboxInput("Colour", "Brightly coloured areas?", value = TRUE)
@@ -145,7 +145,7 @@ shinyUI(fluidPage(
                          selected = Industries_RGDP[3],
                          selectize = FALSE,
                          width = "300px"),
-             sliderInput("Year", "Year", min = 2000, max = 2012, value = 2012, animate = TRUE,
+             sliderInput("Year", "Year", min = 2000, max = 2013, value = 2013, animate = TRUE,
                          sep = "")
              ),
       column(width = 8,

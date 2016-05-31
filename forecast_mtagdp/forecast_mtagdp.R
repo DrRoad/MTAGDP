@@ -62,22 +62,26 @@
 ##
 
    # create a wide matrix with the region x TA x industry classes as columns
-     mtagdp.w <- TAGDP_defl %>%
-                 group_by(Year, TA_Region_modified) %>%
-                 summarise(GDP = sum(GDP, na.rm=TRUE)) %>%
-                 spread(TA_Region_modified, GDP) 
+     mtagdp_wide <- TAGDP_defl %>%
+                    group_by(Year, TA_Region_modified) %>%
+                    summarise(GDP = sum(GDP, na.rm=TRUE)) %>%
+                    spread(TA_Region_modified, GDP) 
 
-     mtagdp.w[is.na(mtagdp.w) ] <- 0  ## can safely assume these are zeros
+     mtagdp_wide[is.na(mtagdp_wide)] <- 0  ## can safely assume these are zeros
 
     # turn ta x industry combinations into a timeseries matrix
-         mtagdp.ts <- mtagdp.w
-         for(i in 1:ncol(mtagdp.w)) {
-             mtagdp.ts[, i] <- ts(mtagdp.ts[, i], start=c(2000, 1), frequency = 1)
+         mtagdp_tsmatrix <- mtagdp_wide
+    #        for(i in 1:ncol(mtagdp_wide)) {
+    #           mtagdp_tsmatrix[, i] <- ts(mtagdp_tsmatrix[, i], start=c(2000, 1), frequency = 1)
+    #       }
+		   for(i in 1:ncol(mtagdp_wide)) {
+               mtagdp_tsmatrix[, i] <- ts(mtagdp_tsmatrix[, i], start=c(startYear, 1), frequency = 1)
            }
 
-         mtagdp.ts <- data.frame(mtagdp.ts)
-         mtagdp.tsm  <- data.matrix(mtagdp.ts[, 2:ncol(mtagdp.ts)])
-         mtagdp.tsm  <- ts(mtagdp.tsm[, 1:ncol(mtagdp.tsm)], start=c(2000, 1), frequency = 1)
+         mtagdp_tsmatrix <- data.frame(mtagdp_tsmatrix)
+         mtagdp_tsmatrix <- data.matrix(mtagdp_tsmatrix[, 2:ncol(mtagdp_tsmatrix)])
+         mtagdp_tsmatrix <- ts(mtagdp_tsmatrix[, 1:ncol(mtagdp_tsmatrix)], start=c(startYear, 1), frequency = 1)
+	#	 mtagdp_tsmatrix <- ts(mtagdp_tsmatrix[, 1:ncol(mtagdp_tsmatrix)], start=c(2000, 1), frequency = 1)
 
 ##
 ##  3. Disaggregate the time series & bind results into a matrix & perform {gts}
@@ -85,47 +89,51 @@
       # disaggregate the series to monthly time steps   ## N.B. also tested with "quarterly", but monthly
                                                         #    performs much better
          m   <- NULL
-         for(i in 1:ncol(mtagdp.tsm)) {
-              m[[i]]   <- td(mtagdp.tsm[, i] ~ 1, to = "monthly", method = "denton-cholette")
+         for(i in 1:ncol(mtagdp_tsmatrix)) {
+              m[[i]] <- td(mtagdp_tsmatrix[, i] ~ 1, to = "monthly", method = "denton-cholette")
                           
            }
 
         tmp <- m  # create a copy for converting to time series
-        for(i in 1:length(tmp)) {
-	         tmp[[i]] <- ts(tmp[[i]]$values, start=c(2000, 1), frequency=12)
-           }
+          for(i in 1:length(tmp)) {
+             tmp[[i]] <- ts(tmp[[i]]$values, start=c(startYear, 1), frequency=12)
+          }
+		#  for(i in 1:length(tmp)) {
+        #     tmp[[i]] <- ts(tmp[[i]]$values, start=c(2000, 1), frequency=12)
+        #  }
     
-        tmp.dm <- data.matrix(ts(tmp))
+        tmp <- data.matrix(ts(tmp))
        
       # create a matrix from the list
-        tmp.ul <- ts(matrix(unlist(tmp.dm), ncol = length(tmp)), start=c(2000, 1), frequency=12)       
+        tmp <- ts(matrix(unlist(tmp), ncol = length(tmp)), start=c(startYear, 1), frequency=12)       
+		#tmp <- ts(matrix(unlist(tmp), ncol = length(tmp)), start=c(2000, 1), frequency=12)       
 
       # attach the group names (TAs)
-        colnames(tmp.ul) <- colnames(mtagdp.tsm)
+        colnames(tmp) <- colnames(mtagdp_tsmatrix)
 
-     # create the group time series object       ## N.B. 'characters' specify the groupings 4 region; 4 ta; 4 industry
-        tmp.gts <- gts(tmp.ul)
+      # create the group time series object             ## N.B. 'characters' specify the groupings 4 region
+        mtagdp_gts <- gts(tmp)
 
 
       # forecast
-        tmp.gts.fc <- forecast(tmp.gts, 
-                        h           = 24,           ## note the time steps reflect the 'monthly' series
-                        fmethod     = "arima", 
-                        method      = "comb", 
-                        keep.fitted = TRUE,         ## required for the accuracy.gts{hts} functions
-                        parallel    = TRUE,       ##  on the MBIE machines
-                        num.cores   = 6,          ## seems to be a problem with the multicore function/firewall)
-                        keep.resid  = TRUE)
+        mtagdp_forecast <- forecast(mtagdp_gts, 
+                             h           = 24,           ## note the time steps reflect the 'monthly' series
+                             fmethod     = "arima", 
+                             method      = "comb", 
+                             keep.fitted = TRUE,         ## required for the accuracy.gts{hts} functions
+                             parallel    = TRUE,         ##  on the MBIE machines
+                             num.cores   = 6,
+                             keep.resid  = TRUE)
 
 ##
 ##  4. Plot the results & save expensive objects for later processing
 ##
    # plot to pdf (or screen)
-     CairoPDF("testing_outputs/ngdp_industries_gts.pdf", 7, 7)
-       plot(tmp.gts.fc)
+     CairoPDF("testing_outputs/mtagdp_forecast.pdf", 7, 7)
+       plot(mtagdp_forecast)
      dev.off()
 
    # save expensive data objects
-     save(tmp.gts,    file="data_intermediate/tmp.gts.rda")
-     save(tmp.gts.fc, file="data_intermediate/tmp.gts.fc.rda")  ## quite expensive to create if multicore not resolved
+     save(mtagdp_gts,      file="data_intermediate/mtagdp_gts.rda")
+     save(mtagdp_forecast, file="data_intermediate/mtagdp_forecast.rda")  ## quite expensive to create
 

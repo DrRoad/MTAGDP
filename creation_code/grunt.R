@@ -37,7 +37,7 @@
 ## 1. Set up data objects and the survey object for initial stages of raking on employees & earnings
 ##
    # test from old BDS
-     BDS <- BDS %>% filter(Year < 2014)
+     BDS <- BDS %>% filter(Year <= endYear)
 
    # create earnings object from BDS data
      EarningsDetailed <- BDS
@@ -81,7 +81,7 @@
 # the weighting will take care of it.  Total Earnings being proportionate to OOD, within
 # the constraint of the overall region, is a reasonable assumption, so we do that
 
-   OOD <- EarningsDetailed %>% group_by(Year, TA, TA_Region_modified, RegionGDP, Region, LEED18Region) %>%
+   OOD <- EarningsDetailed %>% group_by(Year, TA, TA_Region_modified, RGDP_Region, Region, LEED18Region) %>%
                                summarise(
                                  Earnings = sum(Earnings),
                                  Employees = 0,
@@ -109,8 +109,9 @@
     TAGDP <- rbind(EarningsDetailed, OOD)
     TAGDP <- rbind(TAGDP, GST_Duties_Tax)
     TAGDP <- TAGDP %>%  
-             filter(Year %in% unique(rgdp_pop_custom$Year)) %>%
-             # add on the code of the custom data
+             #filter(Year %in% unique(rgdp_pop_custom$Year)) %>%
+              filter(Year %in% InYears) %>%
+              # add on the code of the custom data
              left_join(unique(industries[ , c("RGDPRef_custom", "RGDPIndustry_custom")]))
 
 ##
@@ -150,9 +151,9 @@
     for(i in 1:15){
       cat("Beginning of loop\n")    
       TAGDP_svy <- rake(TAGDP_svy, 
-                        sample.margins = list (~Year + RGDPIndustry_custom + RegionGDP),
+                        sample.margins = list (~Year + RGDPIndustry_custom + RGDP_Region),
                         population.margins = list(rgdp_pop_custom[!is.na(rgdp_pop_custom$RGDPIndustry_custom), 
-                                                                  c("Year", "RGDPIndustry_custom", "RegionGDP", "Freq")]),
+                                                                  c("Year", "RGDPIndustry_custom", "RGDP_Region", "Freq")]),
                         control = list(maxit = 100, epsilon = tolerance, verbose=FALSE))
           cat(sum((TAGDP$GDP - weights(TAGDP_svy)) ^ 2), "change after weighting to the custom data on loop ", i, "\n")
           TAGDP$GDP <- weights(TAGDP_svy) 
@@ -168,7 +169,7 @@
         
       # Then to the two iterations of RGDP.  All these should be very consistent
         TAGDP_svy <- rake(TAGDP_svy, 
-                      sample.margins = list (~Year + RegionGDP + RegionIndustryRGDP15),
+                      sample.margins = list (~Year + RGDP_Region + RegionIndustryRGDP15),
                       population.margins = list(rgdp_pop_pub_det),
                       control = list(maxit = 100, epsilon = tolerance, verbose=FALSE))  
       # how are we going: troubleshooting
@@ -176,7 +177,7 @@
         TAGDP$GDP <- weights(TAGDP_svy) 
     
          TAGDP_svy <- rake(TAGDP_svy, 
-                        sample.margins = list (~Year + RegionGDP + RGDP_industry),
+                        sample.margins = list (~Year + RGDP_Region + RGDP_industry),
                         population.margins = list(rgdp_pop_pub),
                        control = list(maxit = 100, epsilon = tolerance, verbose=FALSE))  
       # how are we going: troubleshooting
@@ -199,5 +200,5 @@
      
      TAGDP_grunt$TA_short <- gsub(" District", "", TAGDP_grunt$TA)
      TAGDP_grunt$TA_short <- gsub(" City", "",     TAGDP_grunt$TA_short)
-   
+
   

@@ -43,10 +43,13 @@
       BDS.1 <- read.csv("data_raw/TABLECODE7601_Data_c51b48ec-65bb-4ece-880a-fa575544cf03.csv",
                       stringsAsFactors = FALSE)
 
+
       BDS.2 <- read.csv("data_raw/TABLECODE7601_Data_b6e1d6e3-0e61-4a18-95c2-46eda83122ef.csv",
                       stringsAsFactors = FALSE)                
 
-      BDS <- rbind(BDS.2, BDS.1)
+      BDS <- rbind(BDS.2, BDS.1) %>%
+             #filter(Year < 2014)
+             filter(Year %in% startYear:endYear)  
            
    ##
    ##    LEED data are aggregations of specific ANZISC 3 digit industries.  This section makes
@@ -83,7 +86,7 @@
       
     # filter by L3 industries & create LEEDCode
       BDS <- BDS %>%
-             filter( ANZSIC06 %in% Level3Industries ) %>%
+             dplyr::filter( ANZSIC06 %in% Level3Industries ) %>%
              mutate( LEEDCode = factor( substring( ANZSIC06, 1, 4) ) )
      
       for (i in 1:length(MustMerge)){
@@ -99,6 +102,7 @@
       # we don't need ANZSIC06 any more, so aggregate up to the industries we need
 
         BDS <- BDS %>%
+               # mutate(Year = year(TimePeriod)) %>%
                # mutate(Year = year(Year)) %>%
                dplyr::group_by(Year, LEEDCode, Area) %>%
                dplyr::summarise(Value = sum(Value)) %>%
@@ -120,7 +124,7 @@
    ##
       #BDS <- subset(BDS, Area %in% unique(leedTA_to_SNZTA$SNZ_TA) )
       BDS <- BDS %>%
-        filter( Area %in% unique(leedTA_to_SNZTA$SNZ_TA) )
+            dplyr::filter( Area %in% unique(leedTA_to_SNZTA$SNZ_TA) )
 
       # do a cross join with the lower level TA 
       tmp <- BDS %>%
@@ -131,7 +135,7 @@
       ##
      
       ##
-      ##    Check some totals - everything still balancing?
+      ###    Check some totals - everything still balancing?
       ##
 
          BDS_TA_Totals <- with(BDS,
@@ -153,7 +157,7 @@
                         all = TRUE)
          check$Difference <- with(check, (Value.x - Value.y))
 
-         if(sum(check$Difference) != 0){
+         if(round(sum(check$Difference), 10) != 0){
            stop("Something went wrong in allocating employees to the broken down sub-TAs")
          }
    ##
@@ -167,7 +171,7 @@
    ##
       ( unique(BDS$Region) %in% unique(regions_concs$Region) )
       BDS <- left_join(BDS, regions_concs) %>%
-             rename(TA = Area)
+             dplyr::rename(TA = Area)
 
    ##
    ## creates a combined region-industry classification that makes the optimal use of the published
@@ -177,11 +181,11 @@
         mutate(
           i = ifelse(RGDPIndustry_2015 %in% c("Forestry, Fishing, and Mining", 
                                               "Electricity, Gas, Water, and Waste services") &
-                     RegionGDP %in% c("Marlborough", "West Coast"),
+                     RGDP_Region %in% c("Marlborough", "West Coast"),
                                       "Forestry, Fishing, Mining, Electricity, Gas, Water and Waste Services",
                      RGDPIndustry_2015),
           i = ifelse(i %in% c("Other Manufacturing", "Primary Manufacturing") &
-                       RegionGDP %in% c("Northland", "Southland"),
+                       RGDP_Region %in% c("Northland", "Southland"),
                                         "Manufacturing",
                      i),
           RegionIndustryRGDP15 = ifelse(i %in% 
@@ -203,15 +207,33 @@
                                                  "Health Care and Social Assistance",
                                                  "GST on Production, Import Duties and Other Taxes"),
                                              i, 
-                                             paste(RegionGDP, i)))  %>%
+                                             paste(RGDP_Region, i)))  %>%
         select(-i)
 
       #==================together====================
       BDS <- BDS %>%
                group_by(Year, 
                         LEED4Industry, LEED18Industry, RGDPIndustry_custom, NGDP_industry, RegionIndustryRGDP15, RGDP_industry,
-                        TA, TA_Region_modified, Region, LEED18Region, RegionGDP) %>%
+                        TA, TA_Region_modified, Region, LEED18Region, RGDP_Region) %>%
+
                summarise(Employees = sum(Value)) %>%
                filter(LEED18Industry != "Not elsewhere included") %>%
                data.frame()
-     
+
+      ## Checking availability of the data for the time period specified by the user 
+      
+      BDSYears<-  sort( unique(BDS$Year) )
+      UserYears<- startYear:endYear
+      DiffYears<- setdiff(UserYears, BDSYears) # The returned value for setdiff changes by the order of the arguments
+      
+      # DiffYears will specify the years that are required for the analysis but are not 
+      # missing from the BDS data.
+      
+      if(length(DiffYears) > 0){
+        cat("The analysis cannot be performed. The data for the specified time period is not available in the BDS table. The missing years are: ")
+        cat(DiffYears,sep="\n")
+        stop("The analysis is stopped")
+      } else{
+          rm(BDSYears, DiffYears, UserYears)
+      }
+

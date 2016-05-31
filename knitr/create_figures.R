@@ -25,10 +25,12 @@
    CairoPNG("figures/compare_marginal_totals.rgdp.png", 6000, 6000, dpi=600)
      print(ggplot(comps0, aes(x=RGDP_industry, y = OutPerc / 100, colour = Year)) +
        geom_point() +
-       facet_wrap(~RegionGDP) +
+       facet_wrap(~RGDP_Region) +
        coord_flip() +
        scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                               breaks = seq(from = 2000, to =2012, length.out =4)) +
+                               #breaks = seq(from = 2000, to =2012, length.out =4)
+                               breaks = breakYears
+                              ) +
        scale_y_continuous("Percentage out", label=percent, limits = c(-0.00001, 0.00001)) +
        theme(legend.position = c(0.9, 0.13)) +
        ggtitle("Differences from the RGDP marginal totals - published aggregates v1"))
@@ -43,7 +45,9 @@
         coord_flip() +
         scale_y_continuous("Percentage out", label=percent) +
         scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                               breaks = seq(from = 2000, to =2012, length.out =4)) +
+                               #breaks = seq(from = 2000, to =2012, length.out =4)
+                               breaks = breakYears
+                               ) +
         ggtitle("Differences from the NGDP marginal totals"))
 
       dev.off()
@@ -78,7 +82,9 @@
          ggplot(tmp, aes(y=NGDP_industry, x=GDP, colour=as.numeric(Year))) +
            geom_point() +
            scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                  breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                  #breaks = seq(from = 2000, to =2012, length.out =4)
+                                  breaks = breakYears
+                                  ) +
            scale_x_continuous("\nContribution to GDP ($m)", label=dollar) +
            labs(y="") +
            theme( plot.title  = element_text(size = 18)) +
@@ -118,7 +124,9 @@
          ggplot(tmp, aes(y=TA, x=GDP, colour = as.numeric(Year))) +
               geom_point() +
               scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                #breaks = seq(from = 2000, to =2012, length.out =4)
+                                breaks = breakYears
+                                ) +
            scale_x_continuous("\nContribution to GDP ($m)", label=dollar) +
            labs(y="") +
            ggtitle(paste(allindustries[56], "\nTop 20 Territorial Authorities"))

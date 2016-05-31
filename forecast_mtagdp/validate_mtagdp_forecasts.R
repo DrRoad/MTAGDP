@@ -30,7 +30,9 @@
           theme(plot.title = element_text(size=16, vjust=1)) +
           theme(axis.text.x=element_text(angle=90)) +
           theme(legend.position = "none") +
-          scale_x_continuous(breaks = c(2000, 2004, 2008, 2012))       
+          #scale_x_continuous(breaks = c(2000, 2004, 2008, 2012)
+		  scale_x_continuous(breaks = seq(startYear, endYear-1, by=4) 
+		  )       
     
    CairoPDF("testing_outputs/mtagdp_forecasts.pdf", 7, 7)
      print(p2)
@@ -43,14 +45,14 @@
 # this compares the forecast_grunt$GDP_raked to the published population totals
      
      p4 <- forecast_grunt %>%
-       group_by(Year, RegionGDP) %>%
+       group_by(Year, RGDP_Region) %>%
        summarise(GDP_rake = sum(GDP_rake)) %>%
        left_join(rgdp_pop) %>%
        mutate(Diff = Freq - GDP_rake) %>%
        ggplot(aes(x = Year, y = Diff)) +
        geom_line() +
        geom_point() +
-       facet_wrap(~RegionGDP) +
+       facet_wrap(~RGDP_Region) +
        theme_bw() +
        ggtitle("Discrepancy in final regional totals to published RGD\nby RGDP region")
      

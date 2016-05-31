@@ -86,12 +86,12 @@ tmp_conc <- industries %>%
 
 comparison <- rgdp_pop_custom %>%
   left_join(tmp_conc) %>%
-  group_by(RGDP_industry, RegionGDP, Year) %>%
+  group_by(RGDP_industry, RGDP_Region, Year) %>%
   summarise(Custom = sum(Freq)) %>%
   left_join(rgdp_pop_pub) %>%
   rename(RGDP = Freq) %>%
   ungroup() %>%
-  group_by(RGDP_industry, RegionGDP, Year) %>%
+  group_by(RGDP_industry, RGDP_Region, Year) %>%
   summarise(Custom = mean(Custom),
             RGDP = sum(RGDP)) %>%
   mutate(Difference = RGDP - Custom,
@@ -110,7 +110,7 @@ tmp_conc <- read.csv("data_raw/concordances/RegionIndustryRGDP15.csv")
 
 comparison <- rgdp_pop_pub_det %>%
   left_join(tmp_conc) %>%
-  group_by(RGDP_industry, RegionGDP, Year) %>%
+  group_by(RGDP_industry, RGDP_Region, Year) %>%
   summarise(Detailed = sum(Freq)) %>%
   left_join(rgdp_pop_pub) %>%
   rename(HighLevel = Freq) %>%

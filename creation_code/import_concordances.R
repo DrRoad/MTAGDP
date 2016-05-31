@@ -21,6 +21,8 @@
    industries             <- read.csv("data_raw/concordances/industries.csv",                      
                               stringsAsFactors = FALSE, na.strings="..")
 
-# This table of concordances aligns to region x industry specific classes - focused on LEED table 18                             
+# This table of concordances aligns to region x industry specific classes - focused on LEED table 18 
+# In the csv file, the variable "RegionGDP" is renamed to be "RGDP_Region
+   
    regions_concs          <- read.csv("data_raw/concordances/region_to_leed18_andRGDP_region.csv", 
                               stringsAsFactors = FALSE)

@@ -127,7 +127,7 @@ Biggest_abs <- CompAdv %>%
 
 Fastest <- TAGDP_public %>%
   group_by(TA, NGDP_industry) %>%
-  summarise(cagr5year = CAGR(ratio = sum(GDP[Year == max(Year)]) / sum(GDP[Year == max(Year - 5)]),
+  summarise(cagr5year = mbie::CAGR(ratio = sum(GDP[Year == max(Year)]) / sum(GDP[Year == max(Year - 5)]),
                              period = 5, digits = 3)
   ) %>%
   filter(cagr5year != Inf) %>%

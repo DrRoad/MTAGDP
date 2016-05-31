@@ -26,9 +26,23 @@
    ##
    ##    Carve out only the years within RGDP, and rename measure variable
    ##
-         ngdp_pop <- subset(ngdp, Year %in% unique(rgdp_pop_pub$Year))
+#          ngdp_pop <- subset(ngdp, Year %in% unique(rgdp_pop_pub$Year))
+         ngdp_pop <- subset(ngdp, Year %in% InYears)
          names(ngdp_pop)[names(ngdp_pop) == "NGDP"] <- "Freq"
-
+    
+  ## ====== Checking whether there are missing years in the data
+     
+     NGDPYears <- unique(ngdp_pop$Year)
+     DiffYears <- setdiff(InYears, NGDPYears)
+     if(length(DiffYears) > 0){
+       cat("The analysis cannot be performed. The data for the specified time period is not available in the NGDP table. The missing years are: ")
+       cat(DiffYears,sep="\n")
+       stop("The analysis is stopped")
+     } else{
+       rm(NGDPYears, DiffYears)
+     }
+     
+     
    ##
    ##    We also need to get GST, Import duties, and Other Taxes on Production which are not "industries" so 
    ##       aren't included in the ngdp series imported earlier, but are included in RGDP so need to be added back and treated as an 
@@ -43,7 +57,20 @@
                                   summarise(Freq = sum(Value, na.rm = TRUE)) %>%
                                   ungroup() %>%
                                   mutate(NGDP_industry = "GST on Production, Import Duties and Other Taxes") %>%
-                                  filter(Year %in% unique(rgdp_pop_pub$Year))
+                                  #filter(Year %in% unique(rgdp_pop_pub$Year))
+                                  filter(Year %in% InYears)
+     
+     ## ====== Checking whether there are missing years in the data
+     
+     GSTYears <- unique(GST_Duties_Tax$Year)
+     DiffYears <- setdiff(InYears, GSTYears)
+     if(length(DiffYears) > 0){
+       cat("The analysis cannot be performed. The data for the specified time period is not available in the GST table. The missing years are: ")
+       cat(DiffYears,sep="\n")
+       stop("The analysis is stopped")
+     } else{
+       rm(GSTYears, DiffYears)
+     } 
            
    ##
    ##  Combine the GDP values with GST into a single object

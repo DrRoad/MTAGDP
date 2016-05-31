@@ -13,95 +13,49 @@
 ##                
 ##    Date:       2014-08-10
 ##
-
+##    Peer-Reviewed by: Senay Yasar Saglam, Sector Performance, MBIE
+##    Review Period: 2016-05-16 to 2016-05-25
 ##
 ##    Notes:      1. Changed to import of table from TRED [FS:  2016-04-04]
-## 
+##                2. The data in TRED is quarterly.
 
-  ## important - This is table 4 with all quarters, all of the lowest level in the industry
+  ## Important - This is table 4 with all quarters, all of the lowest level in the industry
   ##             hierarchy (but not other levels), and only one measure
 
     leed4 <- ImportTS2(TRED, Dataset = 'Table 4: LEED measures, by industry (based on ANZSIC06)', stringsAsFactors=FALSE,
                              where = "Unit = 'Total earnings'") %>%
-             dplyr::mutate(TimePeriod = as.character(TimePeriod)) %>%
-             dplyr::filter(TimePeriod %in% c("2000-03-31","2001-03-31","2002-03-31","2003-03-31","2004-03-31",
-                                             "2005-03-31","2006-03-31","2007-03-31","2008-03-31","2009-03-31",
-                                             "2010-03-31","2011-03-31","2012-03-31","2013-03-31")) %>%            
+             dplyr::mutate(Year = year(TimePeriod)) %>%
+             dplyr::mutate(YEMar = ifelse(month(TimePeriod) == 3, Year, Year + 1)) %>%
              rename(LEED4Industry = CV1) %>%
-             group_by(LEED4Industry, TimePeriod) %>%
-             summarise(TotalEarnings = sum(as.numeric(Value)))
+             group_by(LEED4Industry, YEMar) %>%
+             summarise(TotalEarnings = sum(Value))
+             
 
   # as the TRED import has numerous different levels of ANZSIC06 classes, these need to be filtered for the correct level
     allLEED4industries <- unique(industries$LEED4Industry) 
 
+
     leed4 <- leed4 %>%
-             filter(LEED4Industry %in% allLEED4industries)   
+             filter(LEED4Industry %in% allLEED4industries)
 
-  # ========== set up to use as population frame for a survey object =========== #
+  # ========== set up to use as population frame for a survey object =========== #             
     leed4_pop <- leed4 %>%
-                 mutate(TimePeriod = year(TimePeriod)) %>%
-                 filter(LEED4Industry != "Not elsewhere included") %>%  ## need to check on "Not elsewhere classified"
-                 rename(Freq = TotalEarnings,
-                        Year = TimePeriod) %>%
-                 filter(Year %in% InYears)
-
-
- ## ----------------------------------------------------- ##
- ##                previous call to leed4                 ##
- ## ----------------------------------------------------- ##
- 
-  # leed4 <- read.csv("data_raw/TABLECODE7004_Data_e7610f76-5579-49b3-b63e-9d13a339bd93.csv",
-                    # stringsAsFactors = FALSE)
-  
-# WARNING - a problem with the manual download means the Central Government Administration was in twice
-  # leed4 <- leed4 %>%
-           # mutate(Value = ifelse(Industry == "Central government administration", Value / 2, Value))
-
-#============aggregate to YE March=================
-
-  # leed4$Year <- 2000 + as.numeric(substring(leed4$Quarter, 5, 6))
-
-# fix the problems with the 1990s appearing as 2099 instead of 1999:
-  # leed4$Year <- with(leed4, ifelse(Year > 2080, Year - 100, Year))
-
-  # leed4$YEMar <- with(leed4, ifelse(substring(leed4$Quarter, 1, 3) == "Mar", Year, Year + 1))
-  # leed4 <- leed4 %>%
-           # group_by(Industry, YEMar) %>%
-           # summarise(TotalEarnings = sum(as.numeric(Value))) %>%
-           # rename(LEED4Industry = Industry)
-
-
-# important - This is table 4 with all quarters, all of the lowest level in the industry
-#             hierarchy (but not other levels), and only one measure
-
-
-#  leed4 <- read.csv("data_raw/TABLECODE7004_Data_e7610f76-5579-49b3-b63e-9d13a339bd93.csv",
-#                    stringsAsFactors = FALSE)
-  
-# WARNING - a problem with the manual download means the Central Government Administration was in twice
-#  leed4 <- leed4 %>%
-#           mutate(Value = ifelse(Industry == "Central government administration", 
-#                                 Value / 2, 
-#                                 Value)
-#                  )
-
-#============aggregate to YE March=================
-
-#  leed4$Year <- 2000 + as.numeric(substring(leed4$Quarter, 5, 6))
-
-# fix the problems with the 1990s appearing as 2099 instead of 1999:
-#  leed4$Year <- with(leed4, ifelse(Year > 2080, Year - 100, Year))
-
-#  leed4$YEMar <- with(leed4, ifelse(substring(leed4$Quarter, 1, 3) == "Mar", Year, Year + 1))
-
-#  leed4 <- leed4 %>%
-#           group_by(Industry, YEMar) %>%
-#           summarise(TotalEarnings = sum(as.numeric(Value))) %>%
-#           rename(LEED4Industry = Industry)
-
-#===========set up to use as population frame for a survey object===========
-#  leed4_pop <- leed4 %>%
-#               filter(LEED4Industry != "Not elsewhere included") %>%
-#               rename(Freq = TotalEarnings,
-#                      Year = YEMar) %>%
-#               filter(Year %in% InYears)
+                 filter(LEED4Industry != "Not elsewhere included") %>%
+                 rename(Freq=TotalEarnings) %>%
+                 filter(YEMar %in% InYears) %>%
+                 rename(Year = YEMar)
+    
+ # ============check whether we are missing any years ========================#
+    
+    Leed4Years <-  sort( unique(leed4_pop$Year) )
+    DiffYears <- setdiff(InYears, Leed4Years) # The returned value for setdiff changes by the order of the arguments
+    # DiffYears will specify the years that are required for the analysis but are not 
+    # missing from the Leed4 data.
+    
+    if(length(DiffYears) > 0){
+      cat("The analysis cannot be performed. The data for the specified time period is not available in the Leed4 table. The missing years are: ")
+      cat(DiffYears,sep="\n")
+      stop("The analysis is stopped")
+    } else {
+      rm(DiffYears, Leed4Years)
+    }

@@ -18,9 +18,9 @@
 ##               destinations for each TA.
 ##
 ##               A function is used to correct the earnings according to the commuter correction files,
-##               by working out the proportion of earnings (i.e. "bonuses") that should be shfited and 
+##               by working out the proportion of earnings (i.e. "earningInflow") that should be shifted and 
 ##               added to the earnings of the "recipient" TA.  A running tally of the accumulated change
-##               is printed during the iterations to gauge the relative % change for each correction step.
+##               is printed during the iterations to gauge the relative percentage change for each correction step.
 ##
 ##
 ##   Authors:     Franz Smith & Peter Ellis, Sector Performance, MBIE
@@ -125,9 +125,9 @@ maxIt <- 4 ## The reason for select 4 is above.
         #               (note this is the inverse of how it was until 30 May 2015)
         #   to = TA that will receive (commuting_correction) * TA's earnings
   
-        # TAGDP.c <- TAGDP; filename = "data_raw/commuting_corrections_2.csv" # for debugging 
+        # TAGDP.c <- TAGDP; filename = "data_intermediate/commuting_corrections_2.csv" # for debugging 
   
-        commuting_corrections <- read.csv(filename, stringsAsFactors = FALSE)
+        commutingData <- read.csv(filename, stringsAsFactors = FALSE)
     
         if(is.null(TAGDP.c$Earnings_commuting_corrected)){
           print("This is the first round of commuting correction, so I'm starting with Earnings")
@@ -138,15 +138,15 @@ maxIt <- 4 ## The reason for select 4 is above.
         }
    
         # First we scale down the latest version of the earnings of commuters
-          TAGDP.c <- left_join(TAGDP.c, commuting_corrections, by = "TA") %>%
-                     mutate(subtract = Earnings * commuting_correction, # note that this is now the proportion to subtract, not to leave
-                     Earnings_latest = Earnings_latest - subtract)
+          TAGDP.c <- left_join(TAGDP.c, commutingData, by = "TA") %>%
+                     mutate(transferredEarning = Earnings * commuting_correction, # note that this is now the proportion to transferredEarning, not to leave
+                     Earnings_latest = Earnings_latest - transferredEarning)
   
         # Then we work out how much extra should be going to each city - column "to" -
         # to add up to what we just took away from various commuting suburbs / districts
-           bonuses <- TAGDP.c %>% 
+        earningInflow<- TAGDP.c %>% 
                       group_by(to, Year) %>%                               ## ie group by recipient TA
-                      summarise(bonus = sum(subtract, na.rm = TRUE)) %>%   ## what's the dollar ammount it gets extra in this industry/year
+                      summarise(receivedEarning = sum(transferredEarning, na.rm = TRUE)) %>%   ## what's the dollar amount it gets extra in this industry/year
                       rename(TA = to)
   
         # An annoying complication is that some people commute to TAs that are split over multiple regions...
@@ -155,22 +155,21 @@ maxIt <- 4 ## The reason for select 4 is above.
                         group_by(TA, Year) %>%
                         summarise(Earnings = sum(Earnings))
   
-           combined <- left_join(originals, bonuses) %>%
-                       mutate(bonus = ifelse(is.na(bonus), 0, bonus)) %>%
-                       mutate(bonus_ratio = bonus / Earnings,
-                              bonus_ratio = ifelse(Earnings == 0, 0, bonus_ratio)) %>%
+           combined <- left_join(originals, earningInflow) %>%
+                       mutate(receivedEarning = ifelse(is.na(receivedEarning), 0, receivedEarning)) %>%
+                       mutate(inflow_ratio = ifelse(Earnings == 0, 0, receivedEarning / Earnings)) %>%
                        select(-Earnings)
         
            TAGDP.c <- TAGDP.c %>%
                       left_join(combined, by = c("TA", "Year")) %>%
                       mutate(
-                        Earnings_latest = Earnings_latest + bonus_ratio * Earnings) ## add on the bonus it gets from commuters - 
+                        Earnings_latest = Earnings_latest + inflow_ratio * Earnings) ## add on the receivedEarning it gets from commuters - 
                                                                                     #  a proportion of the *original* earnings amount
   
            # rename and drop unwanted variables
              TAGDP.c <- TAGDP.c %>%
                         mutate(Earnings_commuting_corrected = Earnings_latest) %>%
-                        select(-(Earnings_latest:bonus_ratio))
+                        select(-(Earnings_latest:inflow_ratio))
   
            # None of the above should change total earnings other than rounding error so we do a check
              Diff <- (sum(TAGDP.c$Earnings_commuting_corrected) - sum(TAGDP.c$Earnings)) / sum(TAGDP.c$Earnings) * 100

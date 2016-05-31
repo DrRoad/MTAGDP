@@ -15,7 +15,7 @@
 
 # high level
   comps0 <- TAGDP_grunt %>%
-            group_by(RegionGDP, RGDP_industry, Year) %>%
+            group_by(RGDP_Region, RGDP_industry, Year) %>%
             summarise(GDP=sum(GDP)) %>%
             left_join(rgdp_pop_pub) %>%
             ungroup() %>%
@@ -23,7 +23,7 @@
 
 # with the funny breakdown
   comps1 <- TAGDP_grunt %>%
-            group_by(RegionGDP, RegionIndustryRGDP15, Year) %>%
+            group_by(RGDP_Region, RegionIndustryRGDP15, Year) %>%
             summarise(GDP=sum(GDP)) %>%
             left_join(rgdp_pop_pub_det) %>%
             mutate(OutPerc = ((GDP - Freq) / Freq) * 100) %>%
@@ -58,7 +58,7 @@
 # This one doesn't come out very well but the problems are mainly where the amount is actually very very small.
 
   comps3 <- TAGDP_grunt %>%
-            group_by(RegionGDP, RGDPRef_custom, Year) %>%
+            group_by(RGDP_Region, RGDPRef_custom, Year) %>%
             summarise(GDP_final = sum(GDP)) %>%
             left_join(rgdp_custom_orig) %>%
             mutate(GDP_custom = Freq,
@@ -150,43 +150,52 @@
           coord_flip() +
           scale_y_continuous("Percentage out", label=percent) +
           scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                 breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                 #breaks = seq(from = startYear, to =endYear, length.out =4)
+                                 breaks = breakYears
+                                 ) +
           ggtitle("Differences from the NGDP marginal totals"))
 
 
 ## the only RGDP_industry categories that have been retained are 'owner-occupied property operation' and 'GST on production..'
+
   print(ggplot(comps0, aes(x=RGDP_industry, y = OutPerc / 100, colour = Year)) +
     geom_point() +
-    facet_wrap(~RegionGDP) +
+    facet_wrap(~RGDP_Region) +
     coord_flip() +
       scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                             breaks = seq(from = 2000, to =2012, length.out =4)) +
+                             #breaks = seq(from = startYear, to =endYear, length.out =4)
+                             breaks = breakYears
+                             ) +
     scale_y_continuous("Percentage out", label=percent) +
     theme(legend.position = c(0.9, 0.13)) +
     ggtitle("Differences from the RGDP marginal totals - published aggregates v1"))
 
   print(ggplot(comps1, aes(x=RegionIndustryRGDP15, y = OutPerc / 100, colour = Year)) +
           geom_point() +
-          facet_wrap(~RegionGDP, nrow = 1) +
+          facet_wrap(~RGDP_Region, nrow = 1) +
           coord_flip() +
           scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                 breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                 #breaks = seq(from = startYear, to =endYear, length.out =4)
+                                 breaks=breakYears
+                                 ) +
           scale_y_continuous("Percentage out", label=percent) +
           ggtitle("Differences from the RGDP (detailed) marginal totals - published aggregates v2"))
 
   print(ggplot(comps1, aes(x = Freq, y = GDP)) +
-          geom_abline(xintercept = 0, slop1 = 1, colour = "grey50") +
-          facet_wrap(~RegionGDP) +
+          geom_abline(intercept = 0, slope = 1, colour = "grey50") +
+          facet_wrap(~RGDP_Region) +
           geom_point() +
           scale_x_log10() + scale_y_log10() +
           ggtitle("Differences from the RGDP (detailed) marginal totals - published aggregates"))
       
   print(ggplot(comps3, aes(x=RGDPRef_custom, y = OutPerc / 100, colour = Year)) +
           geom_point() +
-          facet_wrap(~RegionGDP) +
+          facet_wrap(~RGDP_Region) +
           coord_flip() +
           scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                 breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                 #breaks = seq(from = startYear, to =endYear, length.out =4)
+                                 breaks=breakYears
+                                 ) +
           scale_y_continuous("Percentage out", label=percent) +
           theme(legend.position = c(0.9, 0.13)) +
           ggtitle("Differences from the RGDP marginal totals - custom detail (excluding imputed)"))
@@ -194,7 +203,7 @@
   print(comps3 %>%
       ggplot(aes(x = GDP_custom, y = GDP_final)) +
       facet_wrap(~RGDPRef_custom)   +
-      geom_abline(xintercept = 0, slop1 = 1, colour = "grey50") +
+      geom_abline(intercept = 0, slope = 1, colour = "grey50") +
       geom_point() +
         labs(x = "Original custom data provided by SNZ", y = "Final GDP result") +
         scale_x_log10() + scale_y_log10() +
@@ -206,7 +215,9 @@
           geom_point() +
           coord_flip() +
           scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                 breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                 #breaks = seq(from = startYear, to =endYear, length.out =4)
+                                 breaks = breakYears
+                                 ) +
           scale_y_continuous("Percentage out", label=percent) +
           ggtitle("Differences from the LEED4 marginal totals"))
 
@@ -215,7 +226,9 @@
           facet_wrap(~LEED18Region) +
           coord_flip() +
           scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                 breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                 #breaks = seq(from = startYear, to =endYear, length.out =4)
+                                 breaks=breakYears
+                                 ) +
           scale_y_continuous("Percentage out", label=percent) +
           theme(legend.position = c(0.75, 0.13)) +
           ggtitle("Differences from the LEED18 marginal totals"))
@@ -224,7 +237,9 @@
           geom_point() +
           coord_flip() +
           scale_colour_gradientn("Year Ending March", colours = brewer.pal(10, "Spectral"), 
-                                 breaks = seq(from = 2000, to =2012, length.out =4)) +
+                                 #breaks = seq(from = startYear, to =endYear, length.out =4)
+                                 breaks = breakYears
+                                 ) +
           scale_y_continuous("Percentage out", label=percent) +
           ggtitle("Differences from the LEED37 marginal totals"))
         

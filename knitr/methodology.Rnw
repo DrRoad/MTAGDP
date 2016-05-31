@@ -19,7 +19,7 @@ library(ggplot2)
 \usepackage{graphicx}
 \usepackage{longtable}
 
-\classification{DRAFT}
+\classification{}
 %\classification{ }
 \issn{}
 
@@ -123,7 +123,7 @@ This document provides an overview of the methodology and source code used to ge
  
  The basic approach for deriving estimates of MTAGDP uses a technique called Iterative Proportional Fitting, more commonly known as raking, which adjusts a table of cells to add up to the marginal totals that are known to be accurate.  This methodology is commonly used in survey sampling, where data from a sample are raked to provide a set of weights that match the known population totals in categories like age group, sex, and ethnicity.  
 
-For estimating MTAGDP, several data sources were used to successively rake to align totals from finer to coarser-level information of geographic regions and industry classifications.  In effect, the employee and earnings numbers are weighted up to match the published GDP totals, providing a robust method for estimating GDP.  This is a viable approach because ratios of earnings to GDP in different combinations of regions and industries can be determined from the published data in national GDP, regional GDP, and the Linked Employer Employee Database.
+For estimating MTAGDP, several data sources were used to successively rake to align totals from finer to coarser-level information of geographic regions and industry classifications.  In effect, the employee and earnings numbers are weighted up to match the published GDP totals, providing a robust method for estimating GDP.  This is a viable approach because ratios of earnings to GDP in different combinations of regions and industries can be determined from the published data in national GDP (i.e. NGDP), regional GDP (i.e. RGDP), and the Linked Employer Employee Database (i.e. LEED).
  
  Using this approach, MBIE's MTAGDP estimates add up to the Gross Domestic Product Tier 1 official statistics published by Statistics New Zealand at the national and Regional Council level (with varying degrees of industry detail).  Other than rounding error, MTAGDP matches all currently published results whenever it is aggregated to the necessary level.  
  
@@ -135,7 +135,7 @@ For estimating MTAGDP, several data sources were used to successively rake to al
  \begin{tabular}{ p{6cm} | p{8 cm} }
       \textbf{Data set}	& \textbf{Description} \\
       \hline
-      Business Demography Statistics & two-way table of employee numbers, Territorial Authority by fine level (i.e. 6 digit ANZSIC). \url{http://nzdotstat.stats.govt.nz} \\
+      Business Demography Statistics & Yearly two-way table of employee numbers, Territorial Authority by fine level (i.e. 6 digit ANZSIC). \url{http://nzdotstat.stats.govt.nz} \\
       \hline
       Linked Employer-Employee Database Table 4 & 1-Way: Earnings by Quarter and fine level (i.e. 6 digit ANZSIC06) industry classification. \url{http://nzdotstat.stats.govt.nz} \\
       \hline
@@ -145,9 +145,9 @@ For estimating MTAGDP, several data sources were used to successively rake to al
       \hline
       Custom data table from Statistics New Zealand for Regional GDP & providing similar geographic resolution to published RGDP (15 regions) and finer industry classifications (30 industries). Statistics New Zealand\\
       \hline
-      National Gross Domestic Product Production Measure, nominal & Provides more detailed industry breakdown than NGDP but no regional information. \url{http://www.stats.govt.nz/infoshare} \\
+      National Gross Domestic Product Production Measure, nominal (NGDP) & Provides more detailed industry breakdown than NGDP but no regional information. \url{http://www.stats.govt.nz/infoshare} \\
       \hline
-      Regional Gross Domestic Product & Provides regional GDP by industry up to 2012 (at the time of writing).  National totals match (within rounding error) those in NGDP. \url{http://www.stats.govt.nz/infoshare}\\
+      Regional Gross Domestic Product (RGDP) & Provides regional GDP by industry up to 2012 (at the time of writing).  National totals match (within rounding error) those in NGDP. \url{http://www.stats.govt.nz/infoshare}\\
       \hline
  \end{tabular}	
  \end{center}\end{adjustwidth}
@@ -156,7 +156,7 @@ For estimating MTAGDP, several data sources were used to successively rake to al
 \subsection{Techniques}
  The sequence of raking begins with the Business Demography Statistics (BDS), followed by the LEED tables.  This transformed the original granularity (i.e. in the finest available form, but a poor measure of production (i.e. employee numbers from BDS)) to a table with the spatial granularity (i.e. Territorial Authority) and better measure of production (i.e. earnings from the LEED tables).  The final stage of raking scaled the earnings values to be proportional to the Regional and National GDP figures - which created estimates of the correct production measure (i.e. GDP) at the desired spatial granularity (i.e. Territorial Authority).
 
- The approach was to use the BDS as a low level kernel of information about the number of employees in each detailed industry in each Territorial Authority.  ``Employees'' do not include the self-employed, and employee counts do not contain information on pay levels or profits.  However on plausible assumptions the information contained in these job numbers can be of great value.  The method  employed a two step process to develop estimates of gross domestic product at the same level of granularity as the original BDS data:
+ The approach was to use the BDS for a fine level detail for the number of employees in each detailed industry in each Territorial Authority.  ``Employees'' do not include the self-employed, and employee counts do not contain information on pay levels or profits.  However on plausible assumptions the information contained in these job numbers can be of great value.  The method  employed a two step process to develop estimates of gross domestic product at the same level of granularity as the original BDS data:
  \begin{enumerate}
    \item Scale the job numbers to match earnings levels
    \item Scale the resulting earnings estimates to match gross domestic product
@@ -205,9 +205,9 @@ For estimating MTAGDP, several data sources were used to successively rake to al
     for(i in 1:15){
       cat("Beginning of loop\n")    
       TAGDP_svy <- rake(TAGDP_svy, 
-         sample.margins     = list (~Year + RGDPIndustry_custom + RegionGDP),
+         sample.margins     = list (~Year + RGDPIndustry_custom + RGDP_Region),
          population.margins = list(rgdp_pop_custom[!is.na(rgdp_pop_custom$RGDPIndustry_custom), 
-                                       c("Year", "RGDPIndustry_custom", "RegionGDP", "Freq")]),
+                                       c("Year", "RGDPIndustry_custom", "RGDP_Region", "Freq")]),
          control            = list(maxit = 100, epsilon = tolerance, verbose=FALSE))
           
       TAGDP$GDP <- weights(TAGDP_svy) 
@@ -221,13 +221,13 @@ For estimating MTAGDP, several data sources were used to successively rake to al
         
       # Then to the two iterations of RGDP.  All these should be very consistent
         TAGDP_svy <- rake(TAGDP_svy, 
-                      sample.margins = list (~Year + RegionGDP + RegionIndustryRGDP15),
+                      sample.margins = list (~Year + RGDP_Region + RegionIndustryRGDP15),
                       population.margins = list(rgdp_pop_pub_det),
                       control = list(maxit = 100, epsilon = tolerance, verbose=FALSE))  
         TAGDP$GDP <- weights(TAGDP_svy) 
     
          TAGDP_svy <- rake(TAGDP_svy, 
-                        sample.margins = list (~Year + RegionGDP + RGDP_industry),
+                        sample.margins = list (~Year + RGDP_Region + RGDP_industry),
                         population.margins = list(rgdp_pop_pub),
                        control = list(maxit = 100, epsilon = tolerance, verbose=FALSE))  
       # how are we going: troubleshooting
@@ -246,7 +246,7 @@ For estimating MTAGDP, several data sources were used to successively rake to al
  \subsection{Incorporating Commuter Information}
  One limitation of using different employer-employee sources for deriving estimates of GDP at the TA level was the BDS provides information of number of employees at the business address, while the earnings tables available from LEED are based on the employee's home address.  For Territorial Authorities where there are a considerable number of work commuters across districts (e.g. Wellington City receives a large number of commuters from Lower Hutt City, Upper Hutt City, Porirua, Kapiti Coast, et cetera), this effectively means that the production-related earnings are transferred across Territorial Authority boundaries.
  
- In order to correct for the transfer of earnings across Territorial Authority boundaries, data from workplace and home addresses from the 2013 Census\footnote{\url{http://www.stats.govt.nz/Census/2013-census/profile-and-summary-reports/commuter-view-visualisation.aspx}} were used to calculate the relative proportion of earnings based on the reported commuter numbers.  The 4th largest destination `commuting' Territorial Authorities were used to characterise the majority of commuting flows from `origin' TAs.  Although this approach does not include industries and occupation classes that has different proportion of commuters, it provides a reasonable approximation with available data.  Improving this has been noted as an area for future improvement.
+ In order to correct for the transfer of earnings across Territorial Authority boundaries, data from workplace and home addresses from the 2013 Census\footnote{\url{http://www.stats.govt.nz/Census/2013-census/profile-and-summary-reports/commuter-view-visualisation.aspx}} were used to calculate the relative proportion of earnings based on the reported commuter numbers.  The four largest destination `commuting' Territorial Authorities were used to characterise the majority of commuting flows from `origin' TAs.  Although this approach does not include industries and occupation classes that has different proportion of commuters, it provides a reasonable approximation with available data.  Improving this has been noted as an area for future improvement.
  
  Analysis of the commuter flows using the ratio of earnings between the `corrected' values and the original values illustrate regions that there are about 20 Territorial Authorities that receive a greater number of commuters (i.e. having a ratio greater than 1) relative to `donor' TAs (Figure 2). %\ref{net_impact_commuting_correction}. 
  
@@ -274,7 +274,7 @@ The method used for extending the MTAGDP series is based on traditional time-ser
 
 The MTAGDP data series is well suited for this technique, as the modelled data represent industries within Territorial Authorities as natural grouped sets.  And, because the forecast estimates can be aggregated into Regional and National GDP figures, it provides a means to ensure that the forecasted values match the published total values at these levels.
 
-Summaries of total GDP at the TA level were used to forecast GDP estimates out 2 years to match the last published Regional and National GDP figures published by Statistics New Zealand.  The MTAGDP time-series was disaggregated into monthly time steps to provide a greater number of points for developing an ARIMA model\footnote{Using the R package \emph{tempdisagg} \url{https://cran.r-project.org/web/packages/tempdisagg/index.html}}.  After forecasting, these data were aggregated back to yearly time steps.
+Summaries of total GDP at the TA level were used to forecast GDP estimates out 2 years to match the last published Regional and National GDP figures published by Statistics New Zealand.  As the data series provided few time steps for time series forecasting (i.e. yearly data from 2000 to present), MTAGDP data was disaggregated into monthly time steps to provide a greater number of points for developing an ARIMA model\footnote{Using the R package \emph{tempdisagg} \url{https://cran.r-project.org/web/packages/tempdisagg/index.html}}.  After forecasting, these data were aggregated back to the original yearly time steps.
 
 The grouped time series function used an `optimal combination' forecasting method, which creates an independent forecast for each series in the hierarchy.  As these forecasts are created independently, they do not necessarily add up according to the hierarchy or group structure.  The `optimal combination' method combines the independent forecasts and generates a set of revised forecasts that resemble the univariate forecasts but also aggregate consistently with the hierarchical or group structure.
 
@@ -282,7 +282,7 @@ As a final step in the modelling, published data from Regional and National GDP 
 
 GDP estimates were also converted into `real' and `per capita' measures.  `Real GDP' measures were created by summarising the 2000-2012 `real\_GDP' values and adjusting the 2013 and 2014 estimates according to the ``Rolling Annuals - IPDs, Actual, Total (Annual-Mar)'' Infoshare table.  Values were deflated according to the 2012 values to be consistent across the entire series.  Population data at the TA level were taken from the ``Estimated Resident Population for Territorial Authority Areas, at 30 June(1996+) (Annual-Jun)'' table in Infoshare.
 
-Final output was compiled as a separate series into a single \verb|.cvs| file to accompany the MTAGDP file with the industry-level information.  Future incorporation of these data into the shinyapp is planned for 2016.
+Final output was compiled as a separate series into a single \verb|.csv| file to accompany the MTAGDP file with the industry-level information.  Future incorporation of these data into the shinyapp is planned for 2016.
 
 %%
 %%  End of MTAGDP forecasting section
@@ -373,31 +373,6 @@ The \verb|data_raw| folder contains raw data downloaded from Statistics New Zeal
     % \item[data_intermediate]
     % \item[data]
 
-
-The \verb|data_raw| folder contains raw data downloaded from Statistics New Zealand's InfoShare and nzdotstats sites, \verb|.csv| files from data queries from MBIE's internal data bases (reflecting InfoShare tables), and custom \verb|.xlsx| data files.  There are also two additional data folders (i.e. \verb|data_intermediate| and \verb|data| for storing intermediate and final data files.  A sub-folder contained within includes the concordances for matching geographic regions and industry codes, including:
-
-\begin{adjustwidth}{-20mm}{-20mm}\begin{center}
-\begin{tabular}{ p{6cm} | p{8cm} }
-     \textbf{File in the `data\_raw/concordances' Folder}	& \textbf{Explanation} \\
-     \hline
-     industries.csv & This file defines the concordances between the different levels of industry classification from the LEED tables and Regional and National GDP data sources. \\
-     \hline
-     leedTA\_to\_SNZTA.csv & This file serves to link the Territorial Authorities published in the LEED tables and the standard TA definitions. \\
-     \hline
-     region\_to\_leed18\_andRGDP\_region.csv & This file links the Regions published in the LEED18 tables and published Regional GDP data. \\
-     \hline
-     RegionIndustryRGDP15.csv & This file concords the industry levels between the detailed Regional GDP published in March 2015 and previous RGDP versions. \\
-     \hline
-     TA\_to\_multiple\_regions.csv & This files links the Statistics NZ Territorial Authorities and Regional Councils and modified TAs where the TA and RC boundaries do not align.  Relative proportions allocated to the Regional Councils are also defined.  \\
-     \hline
-     deflatorIndustries.csv & This file serves to link the LEED4 industries with industries from the deflator tables. \\
-     \hline
-\end{tabular}	
-\end{center}\end{adjustwidth}	
-     
-    % \item[data_intermediate]
-    % \item[data]
-
  In the calculation of MTAGDP, a number of tests are performed for checking the matching of marginal totals of the different data sources for earnings (i.e. from the LEED tables) and GDP.  Some of the testing prints results to the screen, while others provide plots that are saved to the \verb|testing_outputs| folder.  The key testing files are detailed below:
 
 \begin{adjustwidth}{-20mm}{-20mm}\begin{center}
@@ -406,7 +381,7 @@ The \verb|data_raw| folder contains raw data downloaded from Statistics New Zeal
      \hline
  	 compare\_marginal\_totals.R & Script compares marginal totals across the different data sources for National and Regional GDP, and LEED tables.  Comparisons are printed to the screen and summarised in figures combined into a single \verb|.pdf| file. \\
      \hline
- 	 troubleshoot\_incompatible\_population\_data.R & Script makes comparisons between marginal totals from the different data sources for Regional and National GDP and LEED tables.  Individual tests are used to validate sources used in the stages of calculating MTAGDP. \\
+ 	 troubleshoot\_incompatible\_population.R & Script makes comparisons between marginal totals from the different data sources for Regional and National GDP and LEED tables.  Individual tests are used to validate sources used in the stages of calculating MTAGDP. \\
      \hline
  	 net\_impact\_commuting\_correction.R & Provides a visual summary of influence of commuter correction on earnings.  The expectation is that dormitory suburbs will have ratios less than 1 and urban centres with large numbers of commuters greater than 1. \\
      \hline
@@ -443,7 +418,7 @@ The \verb|data_raw| folder contains raw data downloaded from Statistics New Zeal
     \hline
     create\_public\_repo\_snapshot.R & This script creates a snapshot of the overall project for public release. \\
     \hline
-\end{longtable}	
+\end{tabular}	
 \end{center}\end{adjustwidth}
 
 % \item[dissemination_outputs]
@@ -481,7 +456,7 @@ comparison %>% data.frame() %>%
 head(5) %>% print()
 @
 
-Comparisons among the different sources of Regional GDP showed some differences between the industry and regional margins, which can be attributed in part to the complex industry groupings (e.g. ``Forestry, Fishing, Mining, Electricity, Gas, Water and Waster Services''):
+Comparisons among the various sources of Regional GDP showed some differences between the industry and regional margins, which can be attributed in part to the complex industry groupings (e.g. ``Forestry, Fishing, Mining, Electricity, Gas, Water and Waster Services''):
 
 <<customRGDPtoPubRGDP, eval=TRUE, tidy=FALSE, size="footnotesize">>=
   tmp_conc <- industries %>%
@@ -490,12 +465,12 @@ Comparisons among the different sources of Regional GDP showed some differences 
  
   comparison <- rgdp_pop_custom %>%
     left_join(tmp_conc) %>%
-    group_by(RGDP_industry, RegionGDP, Year) %>%
+    group_by(RGDP_industry, RGDP_Region, Year) %>%
     summarise(Custom = sum(Freq)) %>%
     left_join(rgdp_pop_pub) %>%
     rename(RGDP = Freq) %>%
     ungroup() %>%
-    group_by(RGDP_industry, RegionGDP, Year) %>%
+    group_by(RGDP_industry, RGDP_Region, Year) %>%
     summarise(Custom = mean(Custom),
               RGDP = sum(RGDP)) %>%
     mutate(Difference = RGDP - Custom,
@@ -510,7 +485,7 @@ Comparisons among the different sources of Regional GDP showed some differences 
     print() # Not OK
 @
 
-Differences were also tested to validate whether differences could be detected between sources.  Such tests can be useful for verifying the content of the downloads from Statistics New Zealand (e.g. if some industries are selected twice).  For example, comparisons between the LEED 18 and LEED 4 tables showed some differences in ``Arts and recreation services'', ``Mining; electricity, gas, water, and waste services'', and ``Rental, hiring, and real estate services'':
+These tests were also used to validate whether differences could be detected between sources.  Such tests can be useful for verifying the content of the downloads from Statistics New Zealand (e.g. if some industries are selected twice).  For example, comparisons between the LEED 18 and LEED 4 tables showed some differences in ``Arts and recreation services'', ``Mining; electricity, gas, water, and waste services'', and ``Rental, hiring, and real estate services'':
 
 <<LEED18toLEED4, eval=TRUE, tidy=FALSE, size="footnotesize">>=
   tmp_conc <- industries %>%
@@ -564,7 +539,8 @@ comparison %>% data.frame() %>%
  ByInd <- TAGDP_public %>%
           filter(Year == max(Year)) %>%
           group_by(NGDP_industry) %>%
-          summarise("Total ($b)" = round(sum(GDP) / 10 ^ 9, digits=1))
+         summarise("Total ($b)" = round(sum(GDP) / 10 ^ 3, digits=1))
+
  ByInd <- ByInd[order(-ByInd$"Total ($b)"), ]
  print(xtable(ByInd[1:20, ], 
  caption=paste("Industry totals match those in National GDP (selected industries),", max(TAGDP_public$Year)), label="tab:totals1", digits = 1),
@@ -573,7 +549,8 @@ comparison %>% data.frame() %>%
  ByReg <- TAGDP_public %>%
    filter(Year == max(Year)) %>%
    group_by(Region) %>%
-   summarise("Total ($b)" = round(sum(GDP) / 10 ^ 9, digits=1))
+   summarise("Total ($b)" = round(sum(GDP) / 10 ^ 3, digits=1))
+  
  ByReg <- ByReg[order(-ByReg$"Total ($b)"), ]
  print(xtable(ByReg, caption=paste("Regional totals match those in Regional GDP,", max(TAGDP_public$Year)), label="tab:totals2", digits = 1),
        include.rownames=FALSE)
@@ -615,9 +592,11 @@ The scripts which control the MTAGDP shinyapp functionality are contained in the
  
  \section{Assumptions, Caveats and Key Limitations}
  \subsection{Interaction of Industry and Regional Effects}
- The method has been described in this paper as bottom up, scaling from the BDS jobs numbers up to earnings and then to GDP.  This reflects the steps of the actual technique.  The alternative conceptualisation of it is to consider it from the other direction - we start with Regional GDP and seek ways to disaggregate it into more detailed geographical and industry classifications:
+ The method has been described in this paper as bottom up, scaling from the BDS jobs numbers up to earnings and then to GDP.  The main assumption behind this approach is that ratios of earnings to GDP in different combinations of regions and industries can be determined from the published data in national GDP (i.e. NGDP), regional GDP (i.e. RGDP), and the Linked Employer Employee Database (i.e. LEED).  This is a reasonable assumption and reflects the steps of the actual technique.
+
+An alternative conceptualisation of the method is to consider it from the other direction, starting with Regional GDP and seek ways to disaggregate it into more detailed geographical and industry classifications:
  \begin{itemize}
-   \item We use the national GDP figures to crudely disaggregate to more detailed industry levels
+   \item We use the national GDP figures to disaggregate to more detailed industry levels
    \item We use LEED earnings data to make that disaggregation more precise (i.e. based on the actual split of earnings) to TA level
    \item When the LEED has reached its limits (does not have the complete tabulation of TA and industry), we use the BDS jobs numbers for the final granularity
  \end{itemize}
@@ -631,7 +610,7 @@ The scripts which control the MTAGDP shinyapp functionality are contained in the
 % \emph{I nearly broke my brain trying to explain this without mathematics.  Someone else have a go...}
  
  \subsection{Owner-occupied dwelling operation}
- Owner-occupied dwelling operation (OOD) - effectively, imputed rent from owner-operators who contribute to GDP by selling housing services to themselves - is an important part of the national accounts (depending on how you disaggregate industries, it is usually the largest contributor to GDP).  However, it does not feature in either the jobs count in the BDS or the earnings estimates in the LEED.  Hence the method described above cannot allocate the Regional OOD figures in RGDP to the Territorial Authorities.
+ Owner-occupied dwelling operation (OOD) - effectively, imputed contribution to GDP from owner-operators involved in selling housing services to themselves - is an important part of the national accounts (depending on how you disaggregate industries, it is usually the largest contributor to GDP).  However, it does not feature in either the jobs count in the BDS or the earnings estimates in the LEED.  Hence the method described above cannot allocate the Regional OOD figures in RGDP to the Territorial Authorities.
  
  To get around this problem, OOD was distributed to Territorial Authorities in accordance with the relative total earnings in each Territorial Authority.  Although this seems like a reasonable assumption, further validation on how `Owner-occupied dwelling operation' earnings are distributed will be required.
 
