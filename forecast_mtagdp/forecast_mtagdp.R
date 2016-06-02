@@ -15,7 +15,7 @@
 ##              and
 ##                http://robjhyndman.com/hyndsight/gts/
 ##
-##              As the series for which to forecast are extremely short (i.e. 12 data points),
+##              As the series for which to forecast are extremely short (i.e. ~12 data points),
 ##              the data are disaggregated to monthly time steps prior to running the {gts} routines.
 ##              This step makes for more plausible forecasts from the short series, and appears to 
 ##              make a difference in matching the published Statistics NZ RGDP (e.g. Taranaki, 
@@ -71,9 +71,7 @@
 
     # turn ta x industry combinations into a timeseries matrix
          mtagdp_tsmatrix <- mtagdp_wide
-    #        for(i in 1:ncol(mtagdp_wide)) {
-    #           mtagdp_tsmatrix[, i] <- ts(mtagdp_tsmatrix[, i], start=c(2000, 1), frequency = 1)
-    #       }
+
 		   for(i in 1:ncol(mtagdp_wide)) {
                mtagdp_tsmatrix[, i] <- ts(mtagdp_tsmatrix[, i], start=c(startYear, 1), frequency = 1)
            }
@@ -98,15 +96,12 @@
           for(i in 1:length(tmp)) {
              tmp[[i]] <- ts(tmp[[i]]$values, start=c(startYear, 1), frequency=12)
           }
-		#  for(i in 1:length(tmp)) {
-        #     tmp[[i]] <- ts(tmp[[i]]$values, start=c(2000, 1), frequency=12)
-        #  }
+
     
         tmp <- data.matrix(ts(tmp))
        
       # create a matrix from the list
-        tmp <- ts(matrix(unlist(tmp), ncol = length(tmp)), start=c(startYear, 1), frequency=12)       
-		#tmp <- ts(matrix(unlist(tmp), ncol = length(tmp)), start=c(2000, 1), frequency=12)       
+        tmp <- ts(matrix(unlist(tmp), ncol = length(tmp)), start=c(startYear, 1), frequency=12)         
 
       # attach the group names (TAs)
         colnames(tmp) <- colnames(mtagdp_tsmatrix)

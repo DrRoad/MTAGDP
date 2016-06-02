@@ -142,7 +142,6 @@
        source("creation_code/create_commuting_corrections.R")
      
      # import population data for the calculation of GDP per capita
-     # Caution - years 2000:2012 are hard coded, will need to be changed when we get 2013.
        source("creation_code/import_population_totals.R") 
        
      # import the deflator values (total, chain, nominal) & save .rda's to data_intermediate  
@@ -152,14 +151,12 @@
    ##  Import Business Demography Statistics (N.B. takes a while to import)
    ##
        source("creation_code/import_BDS.R")
-      # source("exploratory_analysis_code/incorporate_newLEEDtables.R")  ## test on using new LEED tables to
-                                                                         #  replace BDS with 'confidential' cells
       
-      #InYears <- sort( unique(BDS$Year) )      
-      InYears <- startYear:endYear
+     # create the object for selecting the years for the series  
+       InYears <- startYear:endYear
 
 
-##  Read in the LEED data.  
+   ##  Read in the LEED tables.  
 
       source("creation_code/import_leed4.R")
       source("creation_code/import_leed18.R")
@@ -175,8 +172,7 @@
    ##      Align the RGDP measures to the National GDP measures.
    ##  
       source("creation_code/import_RGDP.R")
-      
-      
+           
       source("creation_code/import_NGDP.R")
 
       # we need the NGDP and RGDP totals to match before we do the imputation...
@@ -201,13 +197,13 @@
 ##
 ## --------------- 4. Perform trouble-shooting & testing of results------------------------
 ##
-      ## Color code breakdown for the plots
-
-    if((endYear-startYear)%%2==0){
-        breakYears <- seq(from=startYear, to=endYear, by=2)
-        }else{
-      breakYears <- c(seq(from=startYear, to=(endYear-1), by=2 ),endYear)
-      }
+    ## Create colour code breakdown for the plots
+       if((endYear-startYear)%%2==0){
+           breakYears <- seq(from=startYear, to=endYear, by=2)
+             }else{
+        
+          breakYears <- c(seq(from=startYear, to=(endYear-1), by=2 ),endYear)
+         }
 
       # Comparison of original populations for incompatibilities
       # This script prints stuff to the screen.  The thing to look at is the "DiffPercent" column,
@@ -266,7 +262,7 @@
    source("dissemination_code/prepare_basic_TA_commentary.R")
    source("dissemination_code/save_shiny_data.R")
    source("dissemination_code/deploy_shinyapp.R") # deploys "mtagdp_test" by default; edit the script if you also 
-#   want to deploy "mtagdp"
+                                                  #   want to deploy "mtagdp"
 
 
 ##
@@ -298,7 +294,7 @@
       setwd(paste0(project_dir, "/knitr"))
         
     # document describing the methodology & technical details
-      knit2pdf("methodology.Rnw", compiler = 'xelatex', quiet=FALSE) ## doesn't compile
+      knit2pdf("methodology.Rnw", compiler = 'xelatex', quiet=FALSE)
 
     # summary document describing the output data & results
       knit2pdf("summary.Rnw", compiler = 'xelatex', quiet=FALSE, clean = FALSE)  

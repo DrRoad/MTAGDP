@@ -48,7 +48,6 @@
 
      # combine the objects into a single time series
        bottom_combined <- ts(rbind(bottom_timeseries, bottom_forecast), start=c(startYear, 1), frequency=12)
-	   #bottom_combined <- ts(rbind(bottom_timeseries, bottom_forecast), start=c(2000, 1), frequency=12)
 
      # aggregate the 'monthly' time series for total gdp to yearly
        bottom_combined    <- ta(bottom_combined, conversion="sum", to = "annual")

@@ -539,8 +539,7 @@ comparison %>% data.frame() %>%
  ByInd <- TAGDP_public %>%
           filter(Year == max(Year)) %>%
           group_by(NGDP_industry) %>%
-         summarise("Total ($b)" = round(sum(GDP) / 10 ^ 3, digits=1))
-
+          summarise("Total ($b)" = round(sum(GDP) / 10 ^ 9, digits=1))
  ByInd <- ByInd[order(-ByInd$"Total ($b)"), ]
  print(xtable(ByInd[1:20, ], 
  caption=paste("Industry totals match those in National GDP (selected industries),", max(TAGDP_public$Year)), label="tab:totals1", digits = 1),
@@ -549,8 +548,7 @@ comparison %>% data.frame() %>%
  ByReg <- TAGDP_public %>%
    filter(Year == max(Year)) %>%
    group_by(Region) %>%
-   summarise("Total ($b)" = round(sum(GDP) / 10 ^ 3, digits=1))
-  
+   summarise("Total ($b)" = round(sum(GDP) / 10 ^ 9, digits=1))
  ByReg <- ByReg[order(-ByReg$"Total ($b)"), ]
  print(xtable(ByReg, caption=paste("Regional totals match those in Regional GDP,", max(TAGDP_public$Year)), label="tab:totals2", digits = 1),
        include.rownames=FALSE)

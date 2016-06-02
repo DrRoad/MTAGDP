@@ -28,24 +28,8 @@
                                  where   = "Unit = 'Total earnings'") %>%
                   dplyr::mutate(Year = year(TimePeriod)) %>%
                   dplyr::mutate(YEMar = ifelse(month(TimePeriod) == 3, Year, Year + 1)) %>%
-                  dplyr::rename(LEED_TA = CV1) %>%
-                  #dplyr::filter(YEMar > 1999)                 
+                  dplyr::rename(LEED_TA = CV1) %>%             
                   dplyr::filter(YEMar >= startYear)
-       
-    # data from tred looks like it is missing most recent data.  Take it from nzdotstat in the meanwhile
-      # leed37 <- read.csv("data_raw/TABLECODE7037_Data_e5992295-96ec-494b-a801-5d6bf7131077.csv",
-                                                                            # stringsAsFactors = FALSE) 
-      # names(leed37)[names(leed37) == "Territorial.authority"] <- "LEED_TA"
-
-   ##
-   ##    Aggregate to YE March
-   ##
-       # leed37$Year <- 2000 + as.numeric(substring(leed37$Quarter, 5, 6))
-
-      # fix the problems with the 1990s appearing as 2099 instead of 1999:
-        # leed37$Year <- with(leed37, ifelse(Year > 2080, Year - 100, Year))
-        # leed37$YEMar <- with(leed37, ifelse(substring(leed37$Quarter, 1, 3) == "Mar", Year, Year + 1))                 
-                 
     
    ##
    ##    Prior to Quarter Dec-10, there are no values for "Auckland" so we need to create them.
@@ -80,18 +64,17 @@
    ##
    ##    Do a cross join with the lower level TA and make an object
    ##
-#       tmp               <- merge(leed37, TA_to_multiple_regions, by = c("SNZ_TA"), all.x= TRUE, all.y=TRUE)
-#       tmp$TotalEarnings <- with(tmp, TotalEarnings * Proportion)
-# 
-#       if(sum(tmp$TotalEarnings) != sum(leed37$TotalEarnings))
-#       {
-#         stop("Something went wrong apportioning earnings to the sub-TAs (one region per sub-TA)")
-#       }
-# 
-#       leed37 <- tmp
-#       rm(tmp)
-       
-       
+       tmp               <- merge(leed37, TA_to_multiple_regions, by = c("SNZ_TA"), all.x= TRUE, all.y=TRUE)
+       tmp$TotalEarnings <- with(tmp, TotalEarnings * Proportion)
+ 
+       if(sum(tmp$TotalEarnings) != sum(leed37$TotalEarnings))
+       {
+         stop("Something went wrong apportioning earnings to the sub-TAs (one region per sub-TA)")
+       }
+ 
+       leed37 <- tmp
+       rm(tmp)
+              
        ## Removed the check whether TotalEarnings stayed same once we bring in the TA_to_multiple_regions. 
        ## If the sum of proportions for a given TA is equal to 1, then we do not need to make this check. 
         

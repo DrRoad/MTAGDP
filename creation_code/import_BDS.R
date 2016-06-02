@@ -26,20 +26,6 @@
    ##    Data comes from Detailed industry by region-ANZSIC06 2000 to 2012.  All dimensions are selected
    ##       except only the employee count values, not enterprise counts
 
- ## ----------------------------------------------------------------------- ##
- ##     commented out until the 'confidential' cells can be dealt with      ##
- ## ----------------------------------------------------------------------- ##
-    # bds <- ImportTS2(TRED, Dataset = 'Geographic units by region and industry 2000-14', stringsAsFactors=FALSE,
-                           # where   = "Unit = 'Employee Count' and TimePeriod > '1999-12-31'")
-
-    # BDS <- bds %>%
-           # filter(TimePeriod < "2014-01-31") %>%
-           # rename(ANZSIC06 = CV1, Area = CV2)
-                   
- ## ---------------------------------------------------------------------- ##
- ##                        using last year's BDS                           ##
- ## ---------------------------------------------------------------------- ##
-
       BDS.1 <- read.csv("data_raw/TABLECODE7601_Data_c51b48ec-65bb-4ece-880a-fa575544cf03.csv",
                       stringsAsFactors = FALSE)
 
@@ -97,10 +83,8 @@
                                                 )
                                       )
         }
-
-      
+     
       # we don't need ANZSIC06 any more, so aggregate up to the industries we need
-
         BDS <- BDS %>%
                # mutate(Year = year(TimePeriod)) %>%
                # mutate(Year = year(Year)) %>%

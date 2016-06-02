@@ -5,7 +5,8 @@
 ##
 ##  Approach:   Bind the forecast MTAGDP object with additional columns for perCapita, realGDP,
 ##              and realGDP_perCapita columns.  Existing real_GDP are summarised for the period
-##              2000-2012 and the 2013-2014 use the implicit price deflators from published table:
+##              with industry-level detail and deflate the 'between years', using  the implicit 
+##              price deflators from published table:
 ##              "Series, Rolling Annuals - IPDs, Actual, Total (Annual-Mar)"
 ##
 ##              perCapita information come from the same population series used in base series of TAGDP
@@ -36,7 +37,7 @@
                          data.frame()                     
         
 ##
-##  2. Sum the real GDP figures for years 2000-2012 and deflate the 2012-2013 years
+##  2. Sum the real GDP figures for years with industry detail and deflate the 'between' years
 ##     
 
     existing_real <- TAGDP_defl %>%
@@ -64,13 +65,11 @@
                             GDP_real_perCapita = GDP_real * 1000000 / Population) %>%
                      select(Year, TA, Region, GDP, GDP_real, GDP_perCapita, GDP_real_perCapita, notes) %>%
                      data.frame()
-                     
-##       if(sum(mtagdp_totals$GDP[mtagdp_totals$Year < 2014]) != sum(TAGDP_defl$GDP)){
-##          stop("mtagdp_totals has a different sum(GDP) to TAGDP_defl.  Not right.")
-##        }                                                                           
+                                                                                              
     if(sum(mtagdp_totals$GDP[mtagdp_totals$Year <= endYear]) != sum(TAGDP_defl$GDP)){
 		stop("mtagdp_totals has a different sum(GDP) to TAGDP_defl.  Not right.")
-	 } 	
+	 }
+		
 ##
 ## 4.  Save final MTAGDP object for exploratory data analyses & dump to .csv
 ##
